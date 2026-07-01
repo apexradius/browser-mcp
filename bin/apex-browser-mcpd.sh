@@ -1,7 +1,8 @@
 #!/bin/sh
 # Persistent daemon launcher. Resolves node via mise AT RUNTIME so a node
 # version bump never breaks the LaunchAgent (no hardcoded interpreter path).
-cd /Users/apex/projects/apex-browser-mcp || exit 1
+# Resolve project root from this script's own location — portable, no hardcoded home.
+cd "$(cd "$(dirname "$0")/.." && pwd)" || exit 1
 export APEX_BROWSER_TRANSPORT=http
 export APEX_BROWSER_PORT=3010
 export APEX_BROWSER_MAX_SESSIONS=15
