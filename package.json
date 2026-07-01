@@ -1,0 +1,26 @@
+{
+  "name": "@apexradius/browser-mcp",
+  "version": "1.0.0",
+  "description": "Local multi-session browser MCP — real Chrome, Chromium, WebKit (Safari engine) and real Safari.app, plus attach-to-running-Chrome. Many concurrent sessions, no API keys, no cloud.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Apex Radius <dev@apexradius.io>",
+  "bin": { "apex-browser-mcp": "src/index.js" },
+  "main": "src/index.js",
+  "engines": { "node": ">=20" },
+  "files": ["src", "bin", "README.md", "LICENSE"],
+  "keywords": ["mcp", "model-context-protocol", "browser", "automation", "playwright", "chrome", "webkit", "safari", "cdp", "multi-session"],
+  "scripts": {
+    "start": "node src/index.js",
+    "daemon": "APEX_BROWSER_TRANSPORT=http node src/index.js",
+    "test": "node test/extensive.js",
+    "test:attach": "node test/attach-concurrent.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "express": "^5.0.0",
+    "playwright": "^1.61.1",
+    "selenium-webdriver": "^4.30.0",
+    "zod": "^3.24.0"
+  }
+}
