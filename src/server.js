@@ -8,7 +8,7 @@ const ok = (obj) => ({ content: [{ type: 'text', text: typeof obj === 'string' ?
 const err = (e) => ({ isError: true, content: [{ type: 'text', text: `ERROR: ${e.message || e}` }] });
 
 export function buildServer(pool, { screenshotDir = '/tmp' } = {}) {
-  const server = new McpServer({ name: 'apex-browser-mcp', version: '0.1.0' });
+  const server = new McpServer({ name: 'apex-browser-mcp', version: '1.0.0' });
 
   server.registerTool('browser_new_session',
     { title: 'New session', description: 'Open an isolated browser session. engine: chrome (real Chrome) | chromium | webkit (Safari engine, multi) | safari (real Safari.app, single-session). Returns a session id.',
