@@ -37,6 +37,8 @@ On macOS a LaunchAgent (`com.apex.browser-mcp`) keeps it running across reboots.
 ### Env
 `APEX_BROWSER_TRANSPORT` (stdio|http) · `APEX_BROWSER_PORT` (3010) · `APEX_BROWSER_MAX_SESSIONS` (15) · `APEX_BROWSER_HEADLESS` (1=headless) · `APEX_BROWSER_SHOTS` (/tmp)
 
+**Auto-attach** (opt-in): `APEX_BROWSER_AUTOATTACH=1` makes the daemon poll `APEX_BROWSER_CDP` (default `http://127.0.0.1:9222`) and adopt a session the moment a debug Chrome appears — surviving boot-ordering and self-healing if that Chrome closes/reopens. Tune with `APEX_BROWSER_AUTOATTACH_MODE` (default|isolated) and `APEX_BROWSER_AUTOATTACH_INTERVAL` (ms, 5000).
+
 ## Attach to your real Chrome
 ```bash
 bin/chrome-debug.sh real   # quit Chrome first; relaunches your profile with a debug port
