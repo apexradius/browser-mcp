@@ -4,6 +4,57 @@ Own, local, multi-session browser MCP. One tool surface drives **real Chrome**, 
 
 Built because leapfrog / browser-use are Chromium-only (and browser-use needs a per-step LLM key). This spans engines and keeps everything local.
 
+## Start Here
+
+| You are | Start with | Time |
+|---|---|---:|
+| Installing locally | [Run](#run) | 10 min |
+| Connecting an MCP client | [Register in an MCP client](#register-in-an-mcp-client) | 5 min |
+| Extending browser behavior | [docs/architecture.md](docs/architecture.md) and `src/manager.js` | 15 min |
+
+## Architecture
+
+```mermaid
+flowchart TD
+    MCP[MCP client] -->|stdio or HTTP| Server[src/server.js]
+    Server --> Manager[src/manager.js]
+    Manager --> Pool[src/pool.js]
+    Manager --> Safari[src/safari.js]
+
+    subgraph Engines
+        Chrome[Chrome]
+        Chromium[Chromium]
+        WebKit[WebKit]
+        SafariApp[Safari.app]
+        Attached[Attached Chrome]
+    end
+
+    Pool --> Chrome
+    Pool --> Chromium
+    Pool --> WebKit
+    Safari --> SafariApp
+    Manager --> Attached
+```
+
+See [docs/architecture.md](docs/architecture.md) for sequence diagrams and engine boundaries.
+
+## Primary Workflow
+
+```mermaid
+flowchart TD
+    Start([browser_new_session]) --> Engine{Engine}
+    Engine -->|chrome/chromium/webkit| Playwright[Create Playwright context]
+    Engine -->|safari| SafariDriver[Open safaridriver session]
+    Engine -->|attach| CDP[Connect over CDP]
+    Playwright --> Session[Store session]
+    SafariDriver --> Session
+    CDP --> Session
+    Session --> Actions[Navigate, click, type, snapshot]
+    Actions --> Close{Close?}
+    Close -->|yes| Cleanup[Close or detach]
+    Close -->|no| Session
+```
+
 ## Engines
 
 | `engine` | Backend | Sessions | Use |
@@ -64,3 +115,8 @@ node test/attach-concurrent.js  # 5 sessions driving ONE attached Chrome simulta
 - Node resolved via the mise shim so a version bump won't break the daemon.
 
 MIT © Apex Radius
+
+## Reference
+
+- [Start here](docs/start-here.md)
+- [Architecture](docs/architecture.md)
