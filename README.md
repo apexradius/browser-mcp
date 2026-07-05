@@ -1,122 +1,114 @@
 # apex-browser-mcp
 
-Own, local, multi-session browser MCP. One tool surface drives **real Chrome**, **Chromium**, **WebKit (Safari engine)**, and **real Safari.app** — plus **attach to an already-running Chrome** and drive many isolated sessions on it concurrently. No API keys, no cloud, runs on your machine.
+Local multi-session browser MCP for real Chrome, Chromium, WebKit, and real Safari, plus attach to
+an already-running Chrome session without moving the work into a cloud browser.
 
-Built because leapfrog / browser-use are Chromium-only (and browser-use needs a per-step LLM key). This spans engines and keeps everything local.
+Release posture: npm package `@apexradius/browser-mcp`, version `1.0.0` from
+[`package.json`](package.json).
 
-## Start Here
+## Choose your path
 
-| You are | Start with | Time |
-|---|---|---:|
-| Installing locally | [Run](#run) | 10 min |
-| Connecting an MCP client | [Register in an MCP client](#register-in-an-mcp-client) | 5 min |
-| Extending browser behavior | [docs/architecture.md](docs/architecture.md) and `src/manager.js` | 15 min |
+| You are... | Start here | Then |
+|---|---|---|
+| Running the daemon or stdio server | [docs/start-here.md](docs/start-here.md) | Quick start below |
+| Auditing browser routing or attach behavior | [docs/architecture.md](docs/architecture.md) | [`src/manager.js`](src/manager.js) |
+| Reviewing the MCP tool surface | [`src/server.js`](src/server.js) | [`src/index.js`](src/index.js) |
 
 ## Architecture
 
 ```mermaid
 flowchart TD
-    MCP[MCP client] -->|stdio or HTTP| Server[src/server.js]
-    Server --> Manager[src/manager.js]
-    Manager --> Pool[src/pool.js]
-    Manager --> Safari[src/safari.js]
-
-    subgraph Engines
-        Chrome[Chrome]
-        Chromium[Chromium]
-        WebKit[WebKit]
-        SafariApp[Safari.app]
-        Attached[Attached Chrome]
-    end
-
-    Pool --> Chrome
-    Pool --> Chromium
-    Pool --> WebKit
-    Safari --> SafariApp
-    Manager --> Attached
+  U[AI operator] --> C[MCP client]
+  C --> T[stdio or HTTP transport]
+  T --> S[MCP server]
+  S --> M[BrowserManager]
+  M --> P[SessionPool]
+  M --> F[SafariLane]
+  P --> B[Chrome Chromium WebKit sessions]
+  P --> D[Attached Chrome via CDP]
+  F --> R[Real Safari.app session]
 ```
 
-See [docs/architecture.md](docs/architecture.md) for sequence diagrams and engine boundaries.
-
-## Primary Workflow
+## Request flow
 
 ```mermaid
 flowchart TD
-    Start([browser_new_session]) --> Engine{Engine}
-    Engine -->|chrome/chromium/webkit| Playwright[Create Playwright context]
-    Engine -->|safari| SafariDriver[Open safaridriver session]
-    Engine -->|attach| CDP[Connect over CDP]
-    Playwright --> Session[Store session]
-    SafariDriver --> Session
-    CDP --> Session
-    Session --> Actions[Navigate, click, type, snapshot]
-    Actions --> Close{Close?}
-    Close -->|yes| Cleanup[Close or detach]
-    Close -->|no| Session
+  A[Operator opens or attaches a browser session] --> B[Selected MCP tool]
+  B --> C{New session or attach?}
+  C -- new --> D[BrowserManager creates session]
+  C -- attach --> E[Connect to CDP endpoint]
+  D --> F[Session stored in pool]
+  E --> F
+  F --> G[Subsequent navigate snapshot click type evaluate tools]
+  G --> H[Return text or screenshot path to MCP client]
 ```
 
-## Engines
+## Quick start
 
-| `engine` | Backend | Sessions | Use |
-|---|---|---|---|
-| `chrome` | Playwright chromium, `channel=chrome` | N | real Chrome |
-| `chromium` | Playwright chromium (bundled) | N | headless/CI |
-| `webkit` | Playwright webkit | N | Safari-engine cross-browser testing |
-| `safari` | safaridriver (WebDriver) | **1** (OS limit) | real Safari.app |
-| *(attach)* | CDP `connectOverCDP` | N | drive your already-running logged-in Chrome |
+1. Install dependencies and browser engines.
 
-## Tools
-
-`browser_new_session` · `browser_attach` · `browser_navigate` · `browser_snapshot` (indexed refs `e1,e2…`) · `browser_click` · `browser_type` · `browser_evaluate` · `browser_screenshot` · `browser_list_sessions` · `browser_close_session`
-
-## Run
-
-**As a daemon (multi-client, non-blocking — recommended):**
 ```bash
-npm install && npx playwright install chromium webkit
-APEX_BROWSER_TRANSPORT=http node src/index.js   # http://127.0.0.1:3010/mcp
+npm install
+npx playwright install chromium webkit
 ```
-On macOS a LaunchAgent (`com.apex.browser-mcp`) keeps it running across reboots.
 
-**As stdio (single client):** `node src/index.js`
+2. Start the shared HTTP daemon.
 
-### Register in an MCP client
+```bash
+APEX_BROWSER_TRANSPORT=http node src/index.js
+```
+
+3. Register it in your MCP client.
+
 ```json
-{ "mcpServers": { "apex-browser": { "type": "http", "url": "http://127.0.0.1:3010/mcp" } } }
+{
+  "mcpServers": {
+    "apex-browser": {
+      "type": "http",
+      "url": "http://127.0.0.1:3010/mcp"
+    }
+  }
+}
 ```
 
-### Env
-`APEX_BROWSER_TRANSPORT` (stdio|http) · `APEX_BROWSER_PORT` (3010) · `APEX_BROWSER_MAX_SESSIONS` (15) · `APEX_BROWSER_HEADLESS` (1=headless) · `APEX_BROWSER_SHOTS` (/tmp)
+## Available tools
 
-**Auto-attach** (opt-in): `APEX_BROWSER_AUTOATTACH=1` makes the daemon poll `APEX_BROWSER_CDP` (default `http://127.0.0.1:9222`) and adopt a session the moment a debug Chrome appears — surviving boot-ordering and self-healing if that Chrome closes/reopens. Tune with `APEX_BROWSER_AUTOATTACH_MODE` (default|isolated) and `APEX_BROWSER_AUTOATTACH_INTERVAL` (ms, 5000).
+| Tool group | Tools | Purpose |
+|---|---|---|
+| Session lifecycle | `browser_new_session`, `browser_attach`, `browser_list_sessions`, `browser_close_session` | Open, adopt, inspect, and close sessions |
+| Navigation and state | `browser_navigate`, `browser_snapshot` | Load pages and capture indexed interactive refs |
+| Interaction | `browser_click`, `browser_type`, `browser_evaluate` | Drive page interactions and execute page JS |
+| Artifacts | `browser_screenshot` | Save a PNG and return its path |
 
-## Attach to your real Chrome
-```bash
-bin/chrome-debug.sh real   # quit Chrome first; relaunches your profile with a debug port
-# then: browser_attach { mode: "default" }   → your logged-in session
-#       browser_attach { mode: "isolated" }  → fresh stealthed context on the same Chrome
-```
-`bin/chrome-debug.sh` (no arg) uses a safe dedicated automation profile instead.
+## Runtime proof
 
-**Safety invariant:** attached browsers are never closed by us — sessions detach, your Chrome keeps running.
+| Claim | Proof |
+|---|---|
+| Package entry point is stable | `"apex-browser-mcp": "src/index.js"` in [`package.json`](package.json) |
+| HTTP and stdio transports are both first-class | Transport selection in [`src/index.js`](src/index.js) |
+| Session routing is engine-aware | `BrowserManager` in [`src/manager.js`](src/manager.js) |
+| Tool registration is centralized | `buildServer()` in [`src/server.js`](src/server.js) |
 
-## Test
-```bash
-node test/extensive.js        # 29 checks: engines, concurrency, isolation, errors, interaction, daemon
-node test/attach-concurrent.js  # 5 sessions driving ONE attached Chrome simultaneously
-```
+## Repo map
 
-## Ops
-- restart: `launchctl kickstart -k gui/$(id -u)/com.apex.browser-mcp`
-- health: `curl localhost:3010/health` · logs: `/tmp/abm-daemon.log`
+| Path | Purpose |
+|---|---|
+| [`src/index.js`](src/index.js) | Process entry point, transport selection, HTTP daemon |
+| [`src/server.js`](src/server.js) | MCP tool registration and request handlers |
+| [`src/manager.js`](src/manager.js) | Unified routing across SessionPool and SafariLane |
+| [`src/pool.js`](src/pool.js) | Multi-session Playwright and CDP attach backend |
+| [`src/safari.js`](src/safari.js) | Real Safari.app lane |
+| [`docs/start-here.md`](docs/start-here.md) | Setup, env, validation, common failures |
+| [`docs/architecture.md`](docs/architecture.md) | Component map and runtime lifecycle |
 
-## Notes
-- Real Safari.app is single-session (Apple `safaridriver` limit) and runs an automation window that does **not** inherit your everyday Safari logins. For real logins use `chrome` + `browser_attach`.
-- Node resolved via the mise shim so a version bump won't break the daemon.
+## Validation
 
-MIT © Apex Radius
+| Check | Command |
+|---|---|
+| Core regression suite | `npm test` |
+| Attached-Chrome concurrency | `node test/attach-concurrent.js` |
+| README/docs links stay local | `rg '\\]\\(([^)]+\\.md)\\)' README.md docs/` |
 
-## Reference
+## License
 
-- [Start here](docs/start-here.md)
-- [Architecture](docs/architecture.md)
+MIT

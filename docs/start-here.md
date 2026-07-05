@@ -1,34 +1,55 @@
-# Start Here
+# Start Here — apex-browser-mcp
 
-`browser-mcp` runs local browser sessions behind MCP. It can launch fresh browser contexts or
-attach to an already-running Chrome instance.
+## What this repo ships
 
-## First Run
+- One Node package: `@apexradius/browser-mcp`
+- One MCP entry point: `src/index.js`
+- One shared browser manager that routes Playwright sessions, attached Chrome sessions, and real Safari
+
+## First run
+
+1. Install dependencies:
 
 ```bash
 npm install
+```
+
+2. Install the Playwright engines used by the pool:
+
+```bash
 npx playwright install chromium webkit
+```
+
+3. Start the server:
+
+```bash
 APEX_BROWSER_TRANSPORT=http node src/index.js
 ```
 
-The HTTP endpoint is `http://127.0.0.1:3010/mcp` unless `APEX_BROWSER_PORT` changes it.
+## Key environment
 
-## Common Paths
+| Variable | Required | Notes |
+|---|---|---|
+| `APEX_BROWSER_TRANSPORT` | optional | `stdio` by default; `http` for the shared daemon |
+| `APEX_BROWSER_PORT` | optional | HTTP port, default `3010` |
+| `APEX_BROWSER_MAX_SESSIONS` | optional | Concurrent session cap, default `15` |
+| `APEX_BROWSER_HEADLESS` | optional | Set `1` for headless Playwright sessions |
+| `APEX_BROWSER_SHOTS` | optional | Directory for saved screenshots |
+| `APEX_BROWSER_AUTOATTACH` | optional | Set `1` to poll and auto-attach a debug Chrome |
+| `APEX_BROWSER_CDP` | optional | CDP endpoint for attach mode, default `http://127.0.0.1:9222` |
 
-| Need | Command or file |
-|---|---|
-| Start stdio mode | `node src/index.js` |
-| Start HTTP daemon | `APEX_BROWSER_TRANSPORT=http node src/index.js` |
-| Launch debug Chrome | `bin/chrome-debug.sh real` |
-| Run full checks | `npm test` |
-| Test attached Chrome | `npm run test:attach` |
-
-## Development Loop
+## Validation commands
 
 ```bash
-npm install
 npm test
+node test/attach-concurrent.js
 ```
 
-Core routing is in `src/server.js`; session lifecycle is in `src/manager.js`; engine pooling is in
-`src/pool.js`; Safari-specific handling is in `src/safari.js`.
+## Common failures
+
+| Symptom | Likely cause | Fix |
+|---|---|---|
+| No browser launches | Playwright engines missing | Run `npx playwright install chromium webkit` |
+| Attach fails | Chrome was not started with remote debugging | Relaunch with `bin/chrome-debug.sh` |
+| Safari session errors | Safari automation is single-session and OS-gated | Close the existing Safari automation window and retry |
+| Screenshots not saved | Target directory missing or unwritable | Set `APEX_BROWSER_SHOTS` to a writable path |
