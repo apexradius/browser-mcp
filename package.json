@@ -14,7 +14,8 @@
     "start": "node src/index.js",
     "daemon": "APEX_BROWSER_TRANSPORT=http node src/index.js",
     "test": "node test/extensive.js",
-    "test:attach": "node test/attach-concurrent.js"
+    "test:attach": "node test/attach-concurrent.js",
+    "test:ci": "node --test test/*.test.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
