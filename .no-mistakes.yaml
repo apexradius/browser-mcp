@@ -1,0 +1,3 @@
+agent: codex
+commands:
+  test: "node test/extensive.js"
