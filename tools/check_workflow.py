@@ -5,14 +5,13 @@ This validates the document interface, not agent comprehension or product behavi
 """
 import argparse
 from pathlib import Path
-import re
 import subprocess
 import sys
 from urllib.parse import unquote, urlsplit
 
 ROLES = 'AGENTS README HANDOFFS SECURITY SECRETS PRD ARCHITECTURE DESIGN WIREFRAMES CODE_STYLE DATABASE API TESTING MAINTENANCE CAPABILITIES REFERENCES REPORT'.split()
 CORE = ['prompt.md', 'INDEX.md'] + [f'docs/workflow/{n}.md' for n in ['AGENTS', 'HANDOFFS', 'TESTING', 'REFERENCES']]
-from markdown_links import navigation_links
+from markdown_links import heading_anchors, navigation_links
 
 def exact_path(path):
     if not path.exists():
@@ -49,9 +48,7 @@ def inspect(root, tracked=False, budget=3500):
             elif not exact_path(dest):
                 errors.append(f'{path.relative_to(root)}: missing or wrong-case link: {target}')
             elif parsed.fragment and dest.suffix == '.md':
-                headings = re.findall(r'^#{1,6}\s+(.+?)\s*#*$', dest.read_text(), flags=re.M)
-                slugs = {re.sub(r'[^\w\- ]', '', h.lower()).replace(' ', '-') for h in headings}
-                if unquote(parsed.fragment) not in slugs:
+                if unquote(parsed.fragment) not in heading_anchors(dest.read_text()):
                     errors.append(f'{path.relative_to(root)}: missing anchor: {target}')
     if not entry_routes_to_index:
         errors.append("prompt.md: missing navigation edge to INDEX.md")
