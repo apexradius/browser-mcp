@@ -7,6 +7,8 @@ from pathlib import Path
 import re
 import sys
 from datetime import datetime
+from markdown_links import navigation_links
+from urllib.parse import urlsplit
 
 REVIEWED = ('README.md', 'prompt.md', 'INDEX.md', 'docs/workflow/HANDOFFS.md')
 STAGES = ('local', 'ci', 'merge', 'deployment', 'knowledge')
@@ -49,7 +51,11 @@ def inspect_review(root):
         elif hashlib.sha256(path.read_bytes()).hexdigest() != digest:
             errors.append(f'review stale; inspect changed file before refreshing: {name}')
     readme = root/'README.md'
-    if readme.is_file() and not re.search(r'\[[^\]]+\]\(<?(?:\./)?prompt\.md>?\)', readme.read_text()):
+    if readme.is_file() and not any(
+        not (urlsplit(target).scheme or urlsplit(target).netloc)
+        and urlsplit(target).path in ('prompt.md', './prompt.md')
+        for target in navigation_links(readme.read_text())
+    ):
         errors.append('root README must link to prompt.md')
     stages = record.get('stages', {})
     if not isinstance(stages, dict):
