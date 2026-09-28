@@ -28,6 +28,7 @@ def inspect(root, tracked=False, budget=3500):
             errors.append(f'missing or wrong-case required path: {name}')
     docs = [root / 'prompt.md', root / 'INDEX.md', *sorted((root / 'docs/workflow').glob('*.md'))]
     dependencies = set(docs)
+    entry_routes_to_index = False
     for path in docs:
         if not path.is_file():
             continue
@@ -42,6 +43,8 @@ def inspect(root, tracked=False, budget=3500):
                 errors.append(f'{path.relative_to(root)}: machine-absolute dependency: {target}')
                 continue
             dest = (path.parent / unquote(parsed.path)).resolve() if parsed.path else path
+            if path == root / "prompt.md" and dest == root / "INDEX.md":
+                entry_routes_to_index = True
             if dest.is_relative_to(root) and dest.is_file():
                 dependencies.add(dest)
             if not dest.is_relative_to(root):
@@ -53,6 +56,8 @@ def inspect(root, tracked=False, budget=3500):
                 slugs = {re.sub(r'[^\w\- ]', '', h.lower()).replace(' ', '-') for h in headings}
                 if unquote(parsed.fragment) not in slugs:
                     errors.append(f'{path.relative_to(root)}: missing anchor: {target}')
+    if not entry_routes_to_index:
+        errors.append("prompt.md: missing navigation edge to INDEX.md")
     words = sum(len((root / p).read_text().split()) for p in CORE if (root / p).is_file())
     if words > budget:
         errors.append(f'core reading budget exceeded: {words} > {budget} words')

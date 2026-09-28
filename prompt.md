@@ -29,7 +29,7 @@ Use the latest user request as the task selector. This dossier is standing produ
 
 ## Read chain
 
-**Next: [INDEX.md](INDEX.md).** Follow every Continue link through all 17 role documents before returning here. Resolve relevant source contradictions before implementation; existing source documents remain canonical. Read deeper source when the selected task touches it.
+**Next: [INDEX.md](INDEX.md).** Read the mandatory context and all task-relevant routes before acting. Resolve relevant source contradictions before implementation; existing source documents remain canonical. Read deeper source when the selected task touches it.
 
 ## Select the conductor
 

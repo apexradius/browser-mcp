@@ -13,12 +13,19 @@ class WorkflowChecks(unittest.TestCase):
         (self.root/'docs/workflow').mkdir(parents=True)
         for name in ['prompt.md','INDEX.md']+[f'docs/workflow/{r}.md' for r in ROLES]:
             (self.root/name).write_text('# Context\n')
+        (self.root/'prompt.md').write_text('# Context\n[index](INDEX.md)\n')
     def errors(self, **kwargs):
         return inspect(self.root, **kwargs)[0]
     def link(self, value):
         (self.root/'INDEX.md').write_text(value)
     def test_valid_repository_relative_navigation(self):
         self.link('[rules](docs/workflow/AGENTS.md#context)')
+        self.assertEqual([], self.errors())
+    def test_prompt_requires_an_unquoted_navigation_edge(self):
+        for body in ["# Context\n", "```md\n[index](INDEX.md)\n```"]:
+            (self.root/"prompt.md").write_text(body)
+            self.assertIn("prompt.md: missing navigation edge to INDEX.md", self.errors())
+        (self.root/"prompt.md").write_text("[index](./INDEX.md)")
         self.assertEqual([], self.errors())
     def test_missing_required_role(self):
         (self.root/'docs/workflow/API.md').unlink()
@@ -54,6 +61,7 @@ class WorkflowChecks(unittest.TestCase):
         ]:
             with self.subTest(source=source, target=target):
                 (self.root/source).write_text(
+                    ('[index](INDEX.md)\n' if source == 'prompt.md' else '') +
                     f'[detail]({link})\n[directory](./)\n'
                     '[external](https://example.invalid/evidence)\n'
                     '```md\n[optional](missing-evidence.md)\n```\n'
