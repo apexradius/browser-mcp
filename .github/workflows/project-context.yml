@@ -1,0 +1,21 @@
+name: Project context
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+permissions:
+  contents: read
+concurrency:
+  group: project-context-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  context:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - name: Validate portable context and review receipt
+        run: |
+          python3 tools/check_workflow.py --tracked
+          python3 tools/check_review.py
+          python3 -m unittest discover -s tools -p 'test_*check.py'
