@@ -1,6 +1,7 @@
 """Behavioral tests of the published workflow-navigation checker."""
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 import unittest
 from check_workflow import inspect, ROLES
@@ -27,6 +28,19 @@ class WorkflowChecks(unittest.TestCase):
             self.assertIn("prompt.md: missing navigation edge to INDEX.md", self.errors())
         (self.root/"prompt.md").write_text("[index](./INDEX.md)")
         self.assertEqual([], self.errors())
+    def test_cli_rejects_inline_code_pseudo_links(self):
+        checker = Path(__file__).with_name('check_workflow.py')
+        for body in ('`[index](INDEX.md)`', '``[index](INDEX.md)``'):
+            with self.subTest(body=body):
+                (self.root/'prompt.md').write_text(body)
+                result = subprocess.run([sys.executable, str(checker), str(self.root)], capture_output=True, text=True)
+                self.assertNotEqual(0, result.returncode)
+                self.assertIn('prompt.md: missing navigation edge to INDEX.md', result.stdout)
+    def test_cli_accepts_code_formatted_link_labels(self):
+        (self.root/'prompt.md').write_text('Read [`INDEX.md`](INDEX.md).')
+        checker = Path(__file__).with_name('check_workflow.py')
+        result = subprocess.run([sys.executable, str(checker), str(self.root)], capture_output=True, text=True)
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
     def test_missing_required_role(self):
         (self.root/'docs/workflow/API.md').unlink()
         self.assertTrue(self.errors())

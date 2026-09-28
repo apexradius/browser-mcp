@@ -14,6 +14,8 @@ ROLES = 'AGENTS README HANDOFFS SECURITY SECRETS PRD ARCHITECTURE DESIGN WIREFRA
 CORE = ['prompt.md', 'INDEX.md'] + [f'docs/workflow/{n}.md' for n in ['AGENTS', 'HANDOFFS', 'TESTING', 'REFERENCES']]
 LINK = re.compile(r'(?<!!)\[[^\]]+\]\((<[^>]+>|[^)]+)\)')
 
+INLINE_CODE = re.compile(r"(?<!`)(`+)(?!`)(?:(?!(?<!`)\1(?!`))[\s\S])*?(?<!`)\1(?!`)")
+
 def exact_path(path):
     if not path.exists():
         return False
@@ -34,7 +36,11 @@ def inspect(root, tracked=False, budget=3500):
             continue
         # Fenced examples are quoted data, not navigation.
         body = re.sub(r'```.*?```', '', path.read_text(), flags=re.S)
+        code_spans = [m.span() for m in INLINE_CODE.finditer(body)]
         for match in LINK.finditer(body):
+            # Exclude quoted whole links without erasing code-formatted link labels.
+            if any(start <= match.start() < end for start, end in code_spans):
+                continue
             target = match.group(1).strip().strip('<>')
             parsed = urlsplit(target)
             if parsed.scheme or parsed.netloc:
