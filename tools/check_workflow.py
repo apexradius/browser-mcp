@@ -26,6 +26,8 @@ def inspect(root, tracked=False, budget=3500):
         if not exact_path(root / name):
             errors.append(f'missing or wrong-case required path: {name}')
     docs = [root / 'prompt.md', root / 'INDEX.md', *sorted((root / 'docs/workflow').glob('*.md'))]
+    if (root / "README.md").is_file():
+        docs.append(root / "README.md")
     dependencies = set(docs)
     entry_routes_to_index = False
     for path in docs:

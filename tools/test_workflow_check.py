@@ -74,6 +74,22 @@ class WorkflowChecks(unittest.TestCase):
                     self.assertEqual(accepted, result.returncode == 0, result.stdout + result.stderr)
                     if not accepted:
                         self.assertIn('missing anchor:', result.stdout)
+    def test_optional_readme_navigation_public_cli(self):
+        checker = Path(__file__).with_name('check_workflow.py')
+        subprocess.run(['git','init','-q',str(self.root)],check=True)
+        subprocess.run(['git','-C',str(self.root),'add','.'],check=True)
+        command = [sys.executable, str(checker), str(self.root), '--tracked']
+        result = subprocess.run(command, capture_output=True, text=True)
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        for target, accepted in [('prompt.md#missing',False), ('#missing',False),
+                ('missing.md',False), ('Prompt.md',False), ('../other.md',False),
+                ('/outside.md',False), ('prompt.md#context',True), ('#context',True)]:
+            for link in (f'[Start]({target})', f'[Start][entry]\n\n[entry]: {target}'):
+                with self.subTest(target=target, link=link):
+                    (self.root/'README.md').write_text('# Context\n' + link + '\n')
+                    subprocess.run(['git','-C',str(self.root),'add','README.md'],check=True)
+                    result = subprocess.run(command, capture_output=True, text=True)
+                    self.assertEqual(accepted, result.returncode == 0, result.stdout + result.stderr)
     def test_missing_required_role(self):
         (self.root/'docs/workflow/API.md').unlink()
         self.assertTrue(self.errors())
