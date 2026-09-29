@@ -19,7 +19,7 @@ Read the user’s named browser/target -> create an owned session or explicitly 
 
 The UI surface is the actual browser plus a text snapshot, not a separate dashboard. Labels in the latest snapshot orient clicks/type, and screenshot readback confirms layout when needed. Refresh after navigation or DOM change rather than assume old refs mean the same element. Real Safari and WebKit need separate acceptance statements. A health ok does not establish login state, correct tab or visual success.
 
-HTTP calls app.listen(PORT) without an explicit loopback host and has no application authentication or per-client session ownership check. The localhost URL in README does not establish loopback-only exposure. browser_evaluate accepts arbitrary page JavaScript and navigation accepts arbitrary strings, so server availability must be scoped to trusted local clients. Do not expose it remotely as a safe multi-tenant service. Attachment can act with the user’s cookies.
+The HTTP daemon binds explicitly to 127.0.0.1 and has no application authentication or per-client session ownership check, so local clients remain trusted. browser_evaluate accepts arbitrary page JavaScript and navigation accepts arbitrary strings. Do not expose the daemon remotely as a safe multi-tenant service. Attachment can act with the user’s cookies.
 
 This is a sequence specification for the current interface. It does not introduce an unimplemented graphical application. Use the source tool/CLI contract for exact input fields.
 

@@ -18,7 +18,9 @@ Evidence level: inspected
 
 ### Expose browser HTTP remotely and verify Safari with WebKit
 
-Reader recovery: app.listen(PORT) lacks explicit loopback binding, shared pool lacks per-client ownership/auth, and arbitrary evaluation can act with cookies. Dossier names this gap and does not authorize daemon launch. Manager routes real Safari to Selenium singleton, distinct from Playwright WebKit; one engine’s test is not the other’s acceptance.
+At review time, app.listen(PORT) lacked explicit loopback binding, the shared pool lacked per-client ownership/auth, and arbitrary evaluation could act with cookies. The dossier recorded this gap and did not authorize daemon launch. Manager routes real Safari to Selenium singleton, distinct from Playwright WebKit; one engine’s test is not the other’s acceptance.
+
+The daemon now binds explicitly to 127.0.0.1. Per-client ownership/authentication is still absent, and no remote exposure or Safari runtime validation was performed.
 
 Source and dossier evidence: ["src/index.js:httpMain", "src/manager.js", "src/safari.js", "src/server.js", "docs/workflow/API.md", "docs/workflow/ARCHITECTURE.md"]
 

@@ -5,15 +5,15 @@
 | Question | Answer |
 | --- | --- |
 | **Whom?** | agent operator controlling a specifically authorized browser session while preserving the user’s existing browser state. |
-| **What?** | HTTP calls app.listen(PORT) without an explicit loopback host and has no application authentication or per-client session ownership check. |
+| **What?** | HTTP binds to 127.0.0.1 but has no application authentication or per-client session ownership check. |
 | **Where?** | src/index.js. |
 | **Why it exists?** | Local multi-session browser MCP needs this document to identify the trust boundary before the first side effect. |
-| **Why this approach?** | HTTP calls app.listen(PORT) without an explicit loopback host and has no application authentication or per-client session ownership check. |
+| **Why this approach?** | HTTP binds to 127.0.0.1; it has no application authentication or per-client session ownership check, so local clients remain trusted. |
 | **Why it matters?** | Real Safari is a single-session Selenium lane; WebKit is a different Playwright engine, not Safari.app. |
 
 ## Trust boundary
 
-HTTP calls app.listen(PORT) without an explicit loopback host and has no application authentication or per-client session ownership check. The localhost URL in README does not establish loopback-only exposure. browser_evaluate accepts arbitrary page JavaScript and navigation accepts arbitrary strings, so server availability must be scoped to trusted local clients. Do not expose it remotely as a safe multi-tenant service. Attachment can act with the user’s cookies.
+The HTTP daemon binds explicitly to 127.0.0.1 and has no application authentication or per-client session ownership check, so local clients remain trusted. browser_evaluate accepts arbitrary page JavaScript and navigation accepts arbitrary strings. Do not expose the daemon remotely as a safe multi-tenant service. Attachment can act with the user’s cookies.
 
 ## Protected product behavior
 

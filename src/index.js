@@ -89,7 +89,10 @@ async function httpMain() {
   app.delete('/mcp', sessionReq); // session teardown
   app.get('/health', (_req, res) => res.json({ ok: true, sessions: pool.list().length }));
 
-  app.listen(PORT, () => process.stderr.write(`apex-browser-mcp: http daemon on :${PORT}\n`));
+  const httpServer = app.listen(PORT, '127.0.0.1', () => {
+    const { port } = httpServer.address();
+    process.stderr.write(`apex-browser-mcp: http daemon on 127.0.0.1:${port}\n`);
+  });
 }
 
 const shutdown = async () => { await pool.shutdown(); process.exit(0); };

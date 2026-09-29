@@ -17,7 +17,7 @@ browser_new_session(engine=chromium), engines chrome/chromium/webkit/safari; bro
 
 ## Authorization and error limits
 
-HTTP calls app.listen(PORT) without an explicit loopback host and has no application authentication or per-client session ownership check. The localhost URL in README does not establish loopback-only exposure. browser_evaluate accepts arbitrary page JavaScript and navigation accepts arbitrary strings, so server availability must be scoped to trusted local clients. Do not expose it remotely as a safe multi-tenant service. Attachment can act with the user’s cookies.
+The HTTP daemon binds explicitly to 127.0.0.1 and has no application authentication or per-client session ownership check, so local clients remain trusted. browser_evaluate accepts arbitrary page JavaScript and navigation accepts arbitrary strings. Do not expose the daemon remotely as a safe multi-tenant service. Attachment can act with the user’s cookies.
 
 ## Contract gaps
 
