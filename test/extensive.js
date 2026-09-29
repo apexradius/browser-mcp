@@ -6,6 +6,7 @@ import { readFile } from 'node:fs/promises';
 import { BrowserManager } from '../src/manager.js';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
+import { safariLifecycle } from './safari-lifecycle.js';
 
 let pass = 0, fail = 0;
 const ok = (name, cond, extra = '') => { cond ? pass++ : fail++; console.log(`${cond ? 'PASS' : 'FAIL'}  ${name}${extra ? '  — ' + extra : ''}`); };
@@ -51,18 +52,7 @@ try {
 
   // ---------- G2: safari + single-session guard ----------
   section('G2 real Safari.app lifecycle + single-session guard');
-  try {
-    const sf = await m.create({ engine: 'safari' });
-    const nav = await m.navigate(sf, BASE + '/');
-    const snap = await m.snapshot(sf);
-    const ev = await m.evaluate(sf, '6*7');
-    const sf2 = await m.create({ engine: 'safari' });
-    ok('safari: navigate', nav.title === 'ABM Fixture', nav.title);
-    ok('safari: snapshot els', snap.elements.length >= 3, `${snap.elements.length}`);
-    ok('safari: evaluate 6*7', ev === 42, String(ev));
-    ok('safari: single-session reuse', sf2 === sf, `${sf} vs ${sf2}`);
-    await m.close(sf);
-  } catch (e) { ok('safari: lifecycle', false, e.message); }
+  await safariLifecycle(m, BASE, ok, (message) => console.log(message));
 
   // ---------- G3: interaction (type / click / link-nav) ----------
   section('G3 interaction correctness (chromium)');
