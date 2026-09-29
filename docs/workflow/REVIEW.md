@@ -43,6 +43,8 @@ Evidence level: inspected
 | `test/pool.test.js` | `160b018c012000b694e3dbb9e782fe9fb81c9a924fcd24bdfaf8776ea117bb6c` |
 | `docs/architecture.md` | `e370cbae9d471483651894bdb11d42bbae02acec63754b038616e083cab785dc` |
 
+src/index.js changed after this baseline: this delivery binds the HTTP daemon explicitly to 127.0.0.1 and updates the ready message, so the delivered file no longer matches the baseline hash above. The runtime-change scope is recorded in review.json.
+
 Prior review artifact names: `tooling-independent-review.json`. The owner retains these in the dated 2026-09-26 reconstruction evidence directory. A fresh clone can inspect the above source and scenarios without that private directory.
 
 ## Limits

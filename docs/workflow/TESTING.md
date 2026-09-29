@@ -5,15 +5,15 @@
 | Question | Answer |
 | --- | --- |
 | **Whom?** | agent operator controlling a specifically authorized browser session while preserving the user’s existing browser state. |
-| **What?** | npm run test:ci uses node --test test/*.test.js: in-memory MCP transport tests check ten schemas, success/error envelopes; pool tests check empty state, unknown session, cap and unsupported engine before launch. |
-| **Where?** | test/server.test.js, test/pool.test.js. |
+| **What?** | npm run test:ci uses node --test test/*.test.js: in-memory MCP transport tests check ten schemas, success/error envelopes; pool tests check empty state, unknown session, cap and unsupported engine before launch; Safari lifecycle tests classify only a pre-connection Safari timeout as an environment skip while other creation and post-connection failures remain failures. |
+| **Where?** | test/server.test.js, test/pool.test.js, test/safari-lifecycle.test.js. |
 | **Why it exists?** | Local multi-session browser MCP needs this document to choose a check that proves the changed behavior without claiming broader evidence. |
-| **Why this approach?** | npm run test:ci uses node --test test/*.test.js: in-memory MCP transport tests check ten schemas, success/error envelopes; pool tests check empty state, unknown session, cap and unsupported engine before launch. |
+| **Why this approach?** | npm run test:ci uses node --test test/*.test.js: in-memory MCP transport tests check ten schemas, success/error envelopes; pool tests check empty state, unknown session, cap and unsupported engine before launch; Safari lifecycle tests classify only a pre-connection Safari timeout as an environment skip while other creation and post-connection failures remain failures. |
 | **Why it matters?** | A registration or document check cannot prove live authentication, provider state or the installed user path. |
 
 ## Required proof by behavior
 
-npm run test:ci uses node --test test/*.test.js: in-memory MCP transport tests check ten schemas, success/error envelopes; pool tests check empty state, unknown session, cap and unsupported engine before launch. npm test runs test/extensive.js and real browsers; attach/Safari/HTTP scripts exercise live local state and have different side effects. No browser was launched here. Changes to adopted-context ownership need a controlled browser regression, not only the hermetic schema test.
+npm run test:ci uses node --test test/*.test.js: in-memory MCP transport tests check ten schemas, success/error envelopes; pool tests check empty state, unknown session, cap and unsupported engine before launch; Safari lifecycle tests classify only a pre-connection Safari timeout as an environment skip while other creation and post-connection failures remain failures. npm test runs test/extensive.js and real browsers; attach/Safari/HTTP scripts exercise live local state and have different side effects. No browser was launched here. Changes to adopted-context ownership need a controlled browser regression, not only the hermetic schema test.
 
 ## Product acceptance baseline
 
@@ -27,6 +27,7 @@ Inspected means source/test definitions were read. Locally verified means the na
 
 - [test/server.test.js](../../test/server.test.js)
 - [test/pool.test.js](../../test/pool.test.js)
+- [test/safari-lifecycle.test.js](../../test/safari-lifecycle.test.js)
 
 ## Document checker dependency
 
