@@ -1,15 +1,69 @@
-// Extensive suite. Self-contained: spins a local HTTP fixture, exercises every
-// tool/engine, concurrency, isolation, errors, interaction, screenshots, the
-// live MCP daemon (:3010), and CDP-attach (when ABM_CDP=1). Zero test deps.
+// Extensive suite. Self-contained: spins loopback HTTP fixtures and the MCP
+// daemon, then exercises tools, engines, concurrency, isolation, and errors.
+// CDP-attach runs only when ABM_CDP=1. No test-only dependencies.
 import http from 'node:http';
+import { spawn } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
 import { BrowserManager } from '../src/manager.js';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
+import { safariLifecycle } from './safari-lifecycle.js';
 
 let pass = 0, fail = 0;
 const ok = (name, cond, extra = '') => { cond ? pass++ : fail++; console.log(`${cond ? 'PASS' : 'FAIL'}  ${name}${extra ? '  — ' + extra : ''}`); };
 const section = (t) => console.log(`\n=== ${t} ===`);
+
+async function startHttpDaemon() {
+  const entry = fileURLToPath(new URL('../src/index.js', import.meta.url));
+  return new Promise((resolve, reject) => {
+    let stderr = '';
+    let settled = false;
+    const child = spawn(process.execPath, [entry], {
+      env: {
+        ...process.env,
+        APEX_BROWSER_TRANSPORT: 'http',
+        APEX_BROWSER_PORT: '0',
+        APEX_BROWSER_AUTOATTACH: '0',
+        APEX_BROWSER_HEADLESS: '1',
+        APEX_BROWSER_MAX_SESSIONS: '30',
+      },
+      stdio: ['ignore', 'ignore', 'pipe'],
+    });
+    const fail = (error) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      child.kill('SIGTERM');
+      reject(error);
+    };
+    const timer = setTimeout(() => fail(new Error(`HTTP daemon startup timed out: ${stderr.trim()}`)), 10000);
+    child.once('error', fail);
+    child.once('exit', (code, signal) => {
+      if (!settled) fail(new Error(`HTTP daemon exited before ready (${code ?? signal}): ${stderr.trim()}`));
+    });
+    child.stderr.setEncoding('utf8');
+    child.stderr.on('data', (chunk) => {
+      stderr = (stderr + chunk).slice(-4096);
+      const match = stderr.match(/http daemon on 127\.0\.0\.1:(\d+)/);
+      if (settled || !match) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve({
+        child,
+        url: `http://127.0.0.1:${match[1]}/mcp`,
+        async stop() {
+          if (child.exitCode !== null || child.signalCode !== null) return;
+          const exited = new Promise((done) => child.once('exit', done));
+          child.kill('SIGTERM');
+          const forceStop = setTimeout(() => child.kill('SIGKILL'), 5000);
+          await exited;
+          clearTimeout(forceStop);
+        },
+      });
+    });
+  });
+}
 
 // ---- fixture server ----
 const PAGE = (title, body) => `<!doctype html><html><head><title>${title}</title></head><body>${body}</body></html>`;
@@ -51,18 +105,7 @@ try {
 
   // ---------- G2: safari + single-session guard ----------
   section('G2 real Safari.app lifecycle + single-session guard');
-  try {
-    const sf = await m.create({ engine: 'safari' });
-    const nav = await m.navigate(sf, BASE + '/');
-    const snap = await m.snapshot(sf);
-    const ev = await m.evaluate(sf, '6*7');
-    const sf2 = await m.create({ engine: 'safari' });
-    ok('safari: navigate', nav.title === 'ABM Fixture', nav.title);
-    ok('safari: snapshot els', snap.elements.length >= 3, `${snap.elements.length}`);
-    ok('safari: evaluate 6*7', ev === 42, String(ev));
-    ok('safari: single-session reuse', sf2 === sf, `${sf} vs ${sf2}`);
-    await m.close(sf);
-  } catch (e) { ok('safari: lifecycle', false, e.message); }
+  await safariLifecycle(m, BASE, ok, (message) => console.log(message));
 
   // ---------- G3: interaction (type / click / link-nav) ----------
   section('G3 interaction correctness (chromium)');
@@ -128,26 +171,29 @@ try {
     ok('10 concurrent correct+isolated', results.every(Boolean), `${results.filter(Boolean).length}/10 in ${wall}ms`);
   } catch (e) { ok('concurrency', false, e.message); }
 
-  // ---------- G7: MCP daemon, multi-client through :3010 ----------
-  section('G7 live MCP daemon — 4 concurrent clients through :3010');
+  // ---------- G7: MCP daemon, multi-client through a loopback port ----------
+  section('G7 live MCP daemon — 4 concurrent clients through loopback');
+  let daemon;
   const clientCycle = async (label, engine) => {
     const c = new Client({ name: `ext-${label}`, version: '1' });
-    await c.connect(new StreamableHTTPClientTransport(new URL('http://127.0.0.1:3010/mcp')));
+    await c.connect(new StreamableHTTPClientTransport(new URL(daemon.url)));
     const call = async (n, a) => JSON.parse((await c.callTool({ name: n, arguments: a })).content[0].text);
     const { session } = await call('browser_new_session', { engine });
-    const nav = await call('browser_navigate', { session, url: 'https://example.com/' });
+    const nav = await call('browser_navigate', { session, url: BASE + '/' });
     const snap = await call('browser_snapshot', { session });
     await call('browser_close_session', { session });
     await c.close();
-    return nav.title.includes('Example') && Array.isArray(snap.elements);
+    return nav.title === 'ABM Fixture' && Array.isArray(snap.elements);
   };
   try {
+    daemon = await startHttpDaemon();
     const r = await Promise.all([
       clientCycle('A', 'chromium'), clientCycle('B', 'webkit'),
       clientCycle('C', 'chromium'), clientCycle('D', 'chrome'),
     ]);
     ok('4 MCP clients concurrent', r.every(Boolean), `${r.filter(Boolean).length}/4`);
   } catch (e) { ok('mcp daemon multi-client', false, e.message); }
+  finally { if (daemon) await daemon.stop(); }
 
   // ---------- G8: CDP attach (only if a debug Chrome is up) ----------
   section('G8 CDP attach' + (CDP ? '' : ' — SKIPPED (no ABM_CDP)'));

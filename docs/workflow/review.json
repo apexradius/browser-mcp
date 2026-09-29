@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "complete": false,
+  "scope": "Browser MCP: portable document navigation and source-bound review continuity; includes one runtime change: the HTTP daemon binds explicitly to loopback 127.0.0.1, with the ready message updated accordingly.",
+  "reviewed_at": "2026-09-28T15:22:01.515177+00:00",
+  "source_revision": "c54c7b603634b4c8c581e99f21e41d130651cb2f",
+  "files": {
+    "README.md": "2e7e57cbd7097352a25843bfd7d486555e696d27ca07ac4fba9134f583cb9340",
+    "prompt.md": "de360a4cef6e70ba73a1676585171669a3f0b06825eb002cff8b35de9edd704c",
+    "INDEX.md": "b10bc740df6f9e6f70ff9d520aa6c5d0c57097831d267f271465ff81d2464cd4",
+    "docs/workflow/HANDOFFS.md": "45d8fef40dda4026c0a042066dded97965437e8e870c2708818f8dfea4b31ac8"
+  },
+  "stages": {
+    "local": {
+      "required": true,
+      "status": "pending",
+      "evidence": "Run tracked navigation, review consistency, checker fixtures and repository-required checks before delivery."
+    },
+    "ci": {
+      "required": true,
+      "status": "pending",
+      "evidence": "Current candidate hosted checks not yet observed."
+    },
+    "merge": {
+      "required": true,
+      "status": "pending",
+      "evidence": "Current candidate not delivered."
+    },
+    "deployment": {
+      "required": false,
+      "status": "not_applicable",
+      "evidence": "Documentation delivery plus one daemon loopback-bind runtime change; no product release authorized by this record."
+    },
+    "knowledge": {
+      "required": true,
+      "status": "pending",
+      "evidence": "Canonical documentation prepared; portfolio summary closeout remains pending."
+    }
+  }
+}

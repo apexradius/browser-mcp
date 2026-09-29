@@ -112,3 +112,8 @@ APEX_BROWSER_TRANSPORT=http node src/index.js
 ## License
 
 MIT
+
+
+## Project context for new tasks
+
+Read [prompt.md](prompt.md), then [INDEX.md](INDEX.md), for project-specific decisions, task routes and current handoff. Historical examples do not select the current task.
