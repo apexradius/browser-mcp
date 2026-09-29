@@ -5,10 +5,10 @@
 | Question | Answer |
 | --- | --- |
 | **Whom?** | agent operator controlling a specifically authorized browser session while preserving the user’s existing browser state. |
-| **What?** | Proposed maintenance priorities are explicit HTTP exposure/auth/ownership requirements, attach capacity behavior and controlled adopted-browser lifecycle tests. |
+| **What?** | Proposed maintenance priorities are HTTP exposure/auth/ownership hardening beyond the implemented 127.0.0.1 loopback bind, attach capacity behavior and controlled adopted-browser lifecycle tests. |
 | **Where?** | README.md, package.json, src/index.js. |
 | **Why it exists?** | Local multi-session browser MCP needs this document to show what is observed, what remains unknown and what decision follows. |
-| **Why this approach?** | Proposed maintenance priorities are explicit HTTP exposure/auth/ownership requirements, attach capacity behavior and controlled adopted-browser lifecycle tests. |
+| **Why this approach?** | Proposed maintenance priorities are HTTP exposure/auth/ownership hardening beyond the implemented 127.0.0.1 loopback bind, attach capacity behavior and controlled adopted-browser lifecycle tests. |
 | **Why it matters?** | These limits keep the next task honest and bounded. |
 
 ## Reconstruction finding
@@ -25,7 +25,7 @@ d03999b established multi-engine/CDP v1 on June 30; 3b8a5e9 added opt-in auto-at
 
 ## Unresolved product claims
 
-Proposed maintenance priorities are explicit HTTP exposure/auth/ownership requirements, attach capacity behavior and controlled adopted-browser lifecycle tests. These findings do not authorize starting the server or reconnecting to a private browser. The next task should name the engine and behavior; a generic startup request performs context inspection only.
+Proposed maintenance priorities are HTTP exposure/auth/ownership hardening beyond the implemented 127.0.0.1 loopback bind, attach capacity behavior and controlled adopted-browser lifecycle tests. These findings do not authorize starting the server or reconnecting to a private browser. The next task should name the engine and behavior; a generic startup request performs context inspection only.
 
 ## Evidence limits and value
 
