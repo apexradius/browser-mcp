@@ -72,3 +72,19 @@ No new direct dependency, hosted service, private browser access or deployment w
 Local CI-equivalent acceptance: all 23 unit/MCP tests, 25 documentation-checker
 fixtures, workflow/review validators, and full-history and candidate secret scans passed.
 Hosted Actions were removed in the base commit; no hosted CI or production rollout is claimed.
+
+
+## 2026-10-24: concise project guidance
+
+Project startup now routes to task-relevant documents. Product-specific constraints
+remain in AGENTS; implementation, verification and release detail stays in its owning
+documents. This documentation-only change preserves runtime code and existing product
+acceptance limits. The owner authorized reviewed PR delivery after applicable checks
+and independent review; it does not authorize production deployment.
+
+Validation: 25 existing document-checker fixtures passed, along with tracked
+navigation and applicable review-snapshot checks. Runtime source is unchanged.
+
+Independent read-only GLM-5.3/high review checked retained project constraints and
+the owning document routes. Findings relevant to this candidate were resolved and
+the final navigation/review checks passed; runtime source remains unchanged.

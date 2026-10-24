@@ -29,14 +29,11 @@ Use the latest user request as the task selector. This dossier is standing produ
 
 ## Read chain
 
-**Next: [INDEX.md](INDEX.md).** Read the mandatory context and all task-relevant routes before acting. Resolve relevant source contradictions before implementation; existing source documents remain canonical. Read deeper source when the selected task touches it.
+**Next: [INDEX.md](INDEX.md).** Read only task-relevant contracts before acting. Resolve relevant source contradictions before implementation; existing source documents remain canonical. Read deeper source when the selected task touches it.
 
-## Select the conductor
+## Task workflow
 
-- Bounded document maintenance uses doc-writer directly. Use init-studio’s relevant retrospective stages only when reconstructing requirements or reopening a real specification decision; finish with explicit project handoff and unresolved choices. Do not initialize another repository.
-- A reproducible implementation defect routes to debug-studio with the actual failing contract. API/client/schema work routes to api-studio where applicable.
-- Design-studio is for a real operator/document/interface design task. Web-studio requires an actual web-product task; CLI, native browser control, framework or library maintenance does not automatically become web development. Grow-studio applies only to an explicit growth task with evidence-backed claims.
-- Load only the selected conductor and its relevant children. Reuse settled decisions, exact source constraints and current user authorization. Choose native platform/tool capabilities when no conductor matches; do not force a studio for bookkeeping.
+Select relevant skills from the active runtime's current catalog and instructions when the task requires them. This document does not activate a crew, pipeline, provider, or release.
 
 ## First unresolved work
 

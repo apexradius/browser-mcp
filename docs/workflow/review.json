@@ -1,40 +1,42 @@
 {
   "version": 1,
   "complete": false,
-  "scope": "Browser MCP session allocation, owned-resource cleanup and audited dependency updates; local candidate over c0d9a01.",
-  "reviewed_at": "2026-10-24T07:00:05.425913+00:00",
-  "source_revision": "c0d9a0158760f4265f500b11b7d5357bb5779eca",
+  "scope": "Concise task-directed project guidance; documentation-only delivery with product acceptance limits preserved.",
+  "reviewed_at": "2026-10-24T07:47:50.066931+00:00",
+  "source_revision": "71299b30a5c166c71dc4f1ddd76dc1a16c17b60b",
   "files": {
-    "README.md": "2e7e57cbd7097352a25843bfd7d486555e696d27ca07ac4fba9134f583cb9340",
-    "prompt.md": "de360a4cef6e70ba73a1676585171669a3f0b06825eb002cff8b35de9edd704c",
-    "INDEX.md": "b10bc740df6f9e6f70ff9d520aa6c5d0c57097831d267f271465ff81d2464cd4",
-    "docs/workflow/HANDOFFS.md": "5f286d3d76c9fb68ebd8f26d2cf8d895c04bfe2b63a5d0eb3ff197046a464a56",
+    "README.md": "b2743d9a54cab8544b82789827a912759a827a9b2cfa184a154f668d8950700c",
+    "prompt.md": "b5214a5092c7174fd70b04fb0c0a1c66f26911e330a84795f82d2ff810763eb8",
+    "INDEX.md": "264bcd6c298be3ffb7a9281694ba52668d2e2325540d0409280217e0791e37b7",
+    "docs/workflow/HANDOFFS.md": "3bcb85b5f97eee46d413a89292a708e1e1cd6155daff9d763c99ea0af34a4c07",
     "src/pool.js": "5939932fa6de971d9a3d0ab3464fba01f48265de43831031890fde44fb10fab5",
     "test/pool.test.js": "0c715214dfae0543ed7a681818e54a100e2ab85ff3f69ebc9eb112219d290ed1",
     "test/server.test.js": "80860978575c7ca92709efbe73c55f66ca82dcd537525d5be1e23c048403ccbe",
     "test/session-cap-live.js": "06804c76632715e4ab72275c1ebc2170c32a42039c8832ee72bf0c84419fb687",
     "package.json": "0918b157035b772e54cb6e5c07b767d8d8674024403b1d417076abf90e1b4531",
     "package-lock.json": "f81b6f8f966421ce39420cd9db5dee982d62b5b7f7b9c4cea7d2803cf69b486d",
-    "docs/workflow/REPORT.md": "41e7ac76d46df06c6f6e7b8a86031f37e02ef0520e2a21a26815cdcf6a10ff80",
+    "docs/workflow/REPORT.md": "02137e7e700f3e40560ac63d4e73f25900902d1c46a94a125ad05230753b2b2d",
     "docs/workflow/ARCHITECTURE.md": "06b792d92bb518136ea83bb3f44df72b80d85ba948f641c1c7c9be58a3ce1873",
     "docs/workflow/DATABASE.md": "01f9764261641bf5ba508b1344046c01e64262c30a09c41a8a0eb64bd6abef4a",
-    "docs/workflow/TESTING.md": "8ab507724f0a12619c28a1a3b0b32ff63aa8dd521b7fade3bfa69bc2a81d6d00"
+    "docs/workflow/TESTING.md": "dfbc14271bc9251c2afc9b43a60cdd73bac0896e36abd6a09bd7b3ae3435a1e3",
+    "docs/workflow/AGENTS.md": "06c10e312e0a916bd26cb06c8b89b70ce2c08223ed2366e256bb3d2735751aba",
+    "docs/workflow/CAPABILITIES.md": "985f81b26f7b9ab5a85914fbfa2afa42275b8eef81c299a4b4e4bb029744f6eb"
   },
   "stages": {
     "local": {
       "required": true,
       "status": "passed",
-      "evidence": "23 hermetic tests, controlled headless Chrome regression and npm audit passed; report records limits."
+      "evidence": "25 existing document-checker fixtures, tracked navigation and review-snapshot consistency passed. Runtime source unchanged."
     },
     "ci": {
       "required": true,
       "status": "passed",
-      "evidence": "23 unit/MCP tests, 25 workflow checker fixtures, document validators and secret scans passed locally; hosted Actions removed by owner in base c0d9a01. Final independent GLM-5.3 static review found no actionable new regressions."
+      "evidence": "Applicable local documentation gates passed; no hosted workflow files at this base."
     },
     "merge": {
       "required": true,
       "status": "pending",
-      "evidence": "Current candidate not delivered."
+      "evidence": "Documentation candidate awaiting its current validation, independent review and PR delivery."
     },
     "deployment": {
       "required": false,
@@ -43,8 +45,8 @@
     },
     "knowledge": {
       "required": true,
-      "status": "pending",
-      "evidence": "Canonical documentation prepared; portfolio summary closeout remains pending."
+      "status": "passed",
+      "evidence": "Canonical task routing and handoff updated; external knowledge publication outside scope."
     }
   }
 }

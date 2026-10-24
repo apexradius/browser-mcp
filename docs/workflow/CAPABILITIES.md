@@ -21,7 +21,7 @@ Real Safari is a single-session Selenium lane; WebKit is a different Playwright 
 
 The HTTP daemon binds explicitly to 127.0.0.1 and has no application authentication or per-client session ownership check, so local clients remain trusted. browser_evaluate accepts arbitrary page JavaScript and navigation accepts arbitrary strings. Do not expose the daemon remotely as a safe multi-tenant service. Attachment can act with the user’s cookies.
 
-Route the current task through [the conductor selector](../../prompt.md#select-the-conductor). No native runtime, MCP connection, paid model, hook or third-party account is activated by this inventory. Verify availability in the actual invocation instead of inferring it from installed source.
+Route the current task through [task workflow guidance](../../prompt.md#task-workflow). No native runtime, MCP connection, paid model, hook or third-party account is activated by this inventory. Verify availability in the actual invocation instead of inferring it from installed source.
 
 ## Supporting sources
 

@@ -21,7 +21,7 @@ Expose ten consistent session/navigation/interaction/artifact tools. Route real 
 
 ## Evidence custody
 
-Inspected means source/test definitions were read. Locally verified means the named executable check actually ran and its result was observed. Live verified requires the deployed, installed or user-facing path. Historical checkmarks and CI configuration are not fresh results. Use the exact candidate, environment, test input class, observed result and limitations in a receipt. Read [AGENTS](AGENTS.md) for conditional AXI/crew custody; do not create a pipeline merely because this file exists.
+Inspected means source/test definitions were read. Locally verified means the named executable check actually ran and its result was observed. Live verified requires the deployed, installed or user-facing path. Historical checkmarks and CI configuration are not fresh results. Use the exact candidate, environment, test input class, observed result and limitations in a receipt. Use the current task and runtime catalog to select any additional review workflow; this document does not activate a pipeline.
 
 ## Supporting sources
 

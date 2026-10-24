@@ -25,7 +25,7 @@ The latest user request selects the actual task. These proposed maintenance prio
 
 ## Next handoff contract
 
-Record the concrete requested outcome, exact repository/candidate, selected conductor, touched source and task state, completed behavior with evidence level, unresolved blocker, next safe action, approvals and effects already performed. Include operation identity/duplicate-prevention state for any external effect. Preserve requirement/decision changes and pending knowledge events. A source/test inventory is not a release acceptance receipt.
+Record the concrete requested outcome, exact repository/candidate, selected skill/workflow, touched source and task state, completed behavior with evidence level, unresolved blocker, next safe action, approvals and effects already performed. Include operation identity/duplicate-prevention state for any external effect. Preserve requirement/decision changes and pending knowledge events. A source/test inventory is not a release acceptance receipt.
 
 ## Supporting sources
 
@@ -43,3 +43,12 @@ launch ownership and failed attachment cleanup. See [REPORT](REPORT.md) for RED/
 and controlled Chrome evidence. The final independent review found no new regressions; all scoped local CI-equivalent
 checks passed. The remaining delivery step is the owner-authorized PR merge. Existing primary-checkout
 document edits were preserved. No production daemon or user browser was altered.
+
+
+## 2026-10-24: concise project guidance
+
+Project startup now routes to task-relevant documents. Product-specific constraints
+remain in AGENTS; implementation, verification and release detail stays in its owning
+documents. This documentation-only change preserves runtime code and existing product
+acceptance limits. The owner authorized reviewed PR delivery after applicable checks
+and independent review; it does not authorize production deployment.
