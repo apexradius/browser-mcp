@@ -1,10 +1,17 @@
 # Browser MCP: project index
 
-Start at [prompt.md](prompt.md) for the enduring mission and accepted direction. This index locates the existing project contracts; it does not authorize historical operations.
+For product mission or accepted direction, consult [prompt.md](prompt.md). This index locates the existing project contracts; it does not authorize historical operations.
 
-## Mandatory context
+## Read when needed
 
-Read applicable repository instructions, [working rules](docs/workflow/AGENTS.md), [current handoff](docs/workflow/HANDOFFS.md), [verification](docs/workflow/TESTING.md) and [knowledge bindings](docs/workflow/REFERENCES.md). Read the relevant source before changing it.
+Read only the documents needed for the current task. Use the task table below; do not traverse every dossier at startup.
+
+- Resuming work: [HANDOFFS](docs/workflow/HANDOFFS.md).
+- Implementation or verification: the affected source and [TESTING](docs/workflow/TESTING.md).
+- Product-specific working constraints: [AGENTS](docs/workflow/AGENTS.md).
+- Research/provenance: relevant [REFERENCES](docs/workflow/REFERENCES.md).
+
+Commands, versions, dependencies, and directory layout should be read from their owning files when needed.
 
 ## Task routes
 

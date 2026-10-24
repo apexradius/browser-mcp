@@ -116,4 +116,4 @@ MIT
 
 ## Project context for new tasks
 
-Read [prompt.md](prompt.md), then [INDEX.md](INDEX.md), for project-specific decisions, task routes and current handoff. Historical examples do not select the current task.
+Use [INDEX.md](INDEX.md) to find task-specific contracts; consult [prompt.md](prompt.md) when product direction is relevant. Historical examples do not select the current task.
