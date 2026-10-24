@@ -6,6 +6,7 @@ import { test } from 'node:test';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { buildServer } from '../src/server.js';
+import { SessionPool } from '../src/pool.js';
 
 const EXPECTED_TOOLS = [
   'browser_attach',
@@ -81,3 +82,58 @@ test('a failing pool call returns a clean error result, not a crash', async () =
     await close();
   }
 });
+
+test('tool schema defaults and invalid-input rejection survive dependency upgrades', async () => {
+  const engines = [];
+  const { client, close } = await connect({ create: async ({ engine }) => { engines.push(engine); return 'fixture'; } });
+  try {
+    const valid = await client.callTool({ name: 'browser_new_session', arguments: {} });
+    assert.notEqual(valid.isError, true);
+    assert.deepEqual(engines, ['chromium']);
+    const invalid = await client.callTool({ name: 'browser_new_session', arguments: { engine: 'unknown' } });
+    assert.equal(invalid.isError, true);
+    assert.deepEqual(engines, ['chromium'], 'invalid input never reaches the pool');
+  } finally {
+    await close();
+  }
+});
+
+for (const firstTool of ['browser_new_session', 'browser_attach']) {
+ for (const secondTool of ['browser_new_session', 'browser_attach']) {
+  test(`pending ${firstTool} reserves capacity against ${secondTool}`, async () => {
+    const pool = new SessionPool({ maxSessions: 1 });
+    let releasePage;
+    const pageReady = new Promise((resolve) => { releasePage = resolve; });
+    const page = { url: () => 'about:blank', title: async () => { await pageReady; return 'Fixture'; } };
+    const context = { newPage: () => pageReady, pages: () => [page], close: async () => {} };
+    const browser = { newContext: async () => context, contexts: () => [context] };
+    pool.browsers.set('chromium', browser);
+    pool.attached.set('fixture', browser);
+    const { client, close } = await connect(pool);
+    let first;
+    try {
+      first = client.callTool({
+        name: firstTool,
+        arguments: firstTool === 'browser_attach' ? { cdpEndpoint: 'fixture' } : {},
+      });
+      // Deliver the first MCP request before the second; its page remains pending.
+      await new Promise((resolve) => setImmediate(resolve));
+      const second = client.callTool({
+        name: secondTool,
+        arguments: secondTool === 'browser_attach' ? { cdpEndpoint: 'fixture' } : {},
+      });
+      await new Promise((resolve) => setImmediate(resolve));
+      releasePage(page);
+      const results = await Promise.all([first, second]);
+      assert.notEqual(results[0].isError, true);
+      assert.equal(results[1].isError, true);
+      assert.match(results[1].content[0].text, /max sessions \(1\) reached/);
+      assert.equal(pool.list().length, 1);
+    } finally {
+      releasePage(page);
+      await first?.catch(() => {});
+      await close();
+    }
+  });
+ }
+}

@@ -14,49 +14,78 @@ export class SessionPool {
     this.maxSessions = maxSessions;
     this.headless = headless;
     this.browsers = new Map(); // engineKey -> Browser (we own; safe to close)
+    this.browserLaunches = new Map(); // engineKey -> in-flight launch shared by callers
     this.attached = new Map(); // cdpEndpoint -> Browser (user's Chrome; NEVER close)
     this.sessions = new Map(); // sessionId -> { engine, context, page, adopted?, attachedEndpoint? }
     this.counter = 0;
+    this.pendingSessions = 0;
+  }
+
+  _reserveSession() {
+    if (this.sessions.size + this.pendingSessions >= this.maxSessions) {
+      throw new Error(`max sessions (${this.maxSessions}) reached`);
+    }
+    this.pendingSessions++;
   }
 
   // Attach to an already-running Chrome started with --remote-debugging-port.
   // mode 'default' = adopt the real logged-in context (your cookies/tabs).
   // mode 'isolated' = fresh context on the SAME Chrome process (no logins, stealthed).
   async attach({ cdpEndpoint = 'http://127.0.0.1:9222', mode = 'default' } = {}) {
-    let browser = this.attached.get(cdpEndpoint);
-    if (!browser) { browser = await chromium.connectOverCDP(cdpEndpoint); this.attached.set(cdpEndpoint, browser); }
-    let context, page, adopted = false;
-    if (mode === 'isolated') {
-      context = await browser.newContext();
-      await context.addInitScript(() => Object.defineProperty(navigator, 'webdriver', { get: () => undefined }));
-      page = await context.newPage();
-    } else {
-      context = browser.contexts()[0] || await browser.newContext();
-      page = context.pages()[0] || await context.newPage();
-      adopted = true;
+    this._reserveSession();
+    let context, ownsContext = false;
+    try {
+      let browser = this.attached.get(cdpEndpoint);
+      if (!browser) { browser = await chromium.connectOverCDP(cdpEndpoint); this.attached.set(cdpEndpoint, browser); }
+      let page, adopted = false;
+      if (mode === 'isolated') {
+        context = await browser.newContext();
+        ownsContext = true;
+        await context.addInitScript(() => Object.defineProperty(navigator, 'webdriver', { get: () => undefined }));
+        page = await context.newPage();
+      } else {
+        context = browser.contexts()[0];
+        if (!context) { context = await browser.newContext(); ownsContext = true; }
+        page = context.pages()[0] || await context.newPage();
+        adopted = true;
+      }
+      const url = page.url(), title = await page.title();
+      const id = `s${++this.counter}`;
+      this.sessions.set(id, { engine: 'chrome-cdp', context, page, adopted, attachedEndpoint: cdpEndpoint });
+      return { session: id, mode, url, title };
+    } catch (error) {
+      if (ownsContext) { try { await context.close(); } catch {} }
+      throw error;
+    } finally {
+      this.pendingSessions--;
     }
-    const id = `s${++this.counter}`;
-    this.sessions.set(id, { engine: 'chrome-cdp', context, page, adopted, attachedEndpoint: cdpEndpoint });
-    return { session: id, mode, url: page.url(), title: await page.title() };
   }
 
   async _browser(engineKey) {
     if (this.browsers.has(engineKey)) return this.browsers.get(engineKey);
     const spec = ENGINES[engineKey];
     if (!spec) throw new Error(`unknown engine "${engineKey}" (use: ${Object.keys(ENGINES).join(', ')})`);
-    const browser = await spec.type.launch({ headless: this.headless, ...spec.launch });
-    this.browsers.set(engineKey, browser);
-    return browser;
+    if (!this.browserLaunches.has(engineKey)) {
+      const launch = spec.type.launch({ headless: this.headless, ...spec.launch })
+        .then((browser) => { this.browsers.set(engineKey, browser); return browser; })
+        .finally(() => { this.browserLaunches.delete(engineKey); });
+      this.browserLaunches.set(engineKey, launch);
+    }
+    return this.browserLaunches.get(engineKey);
   }
 
   async create({ engine = 'chromium' } = {}) {
-    if (this.sessions.size >= this.maxSessions) throw new Error(`max sessions (${this.maxSessions}) reached`);
-    const browser = await this._browser(engine);
-    const context = await browser.newContext();
-    const page = await context.newPage();
-    const id = `s${++this.counter}`;
-    this.sessions.set(id, { engine, context, page });
-    return id;
+    this._reserveSession();
+    try {
+      const browser = await this._browser(engine);
+      const context = await browser.newContext();
+      const page = await context.newPage();
+      const id = `s${++this.counter}`;
+      this.sessions.set(id, { engine, context, page });
+      return id;
+    } finally {
+      this.pendingSessions--;
+    }
   }
 
   get(id) {
