@@ -34,3 +34,12 @@ Record the concrete requested outcome, exact repository/candidate, selected cond
 ## Continue
 
 Return to [INDEX.md](../../INDEX.md) and finish all routes relevant to the latest task before acting. After verification, update affected owning facts, REPORT and HANDOFFS.
+
+
+## 2026-10-24 candidate
+
+`codex/browser-session-cap-20261024` fixes pool capacity reservations, concurrent engine
+launch ownership and failed attachment cleanup. See [REPORT](REPORT.md) for RED/GREEN
+and controlled Chrome evidence. The final independent review found no new regressions; all scoped local CI-equivalent
+checks passed. The remaining delivery step is the owner-authorized PR merge. Existing primary-checkout
+document edits were preserved. No production daemon or user browser was altered.

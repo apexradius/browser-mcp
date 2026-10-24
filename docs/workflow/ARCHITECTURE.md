@@ -17,7 +17,7 @@ src/index.js chooses stdio (own manager per process) or Express Streamable HTTP 
 
 ## State boundary
 
-All session/browser/ref maps are process-local. Default maxSessions is 15 for created SessionPool contexts; attach follows a separate path and must not be assumed bounded by that create guard. Screenshots are disk artifacts, not embedded proof that a page action succeeded. Default attachment adopts the existing first page/context; isolated mode creates a context on the attached browser. Closing an adopted session drops its map entry without closing the user context. Restart loses routing IDs; rediscover rather than replay stale IDs.
+All session/browser/ref maps are process-local. Default maxSessions is 15 across pending and completed SessionPool creations and attachments. Capacity is reserved before asynchronous browser work and released on failure or session close. Concurrent first sessions share one engine launch; rejected launches can be retried. Real Safari remains a separate single-session lane. Screenshots are disk artifacts, not embedded proof that a page action succeeded. Default attachment adopts the existing first page/context; isolated mode creates a context on the attached browser. Closing an adopted session drops its map entry without closing the user context. Restart loses routing IDs; rediscover rather than replay stale IDs.
 
 ## Evolution and current mismatch
 

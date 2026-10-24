@@ -40,3 +40,35 @@ This reconstruction makes the next task’s interfaces, boundaries and prior int
 ## Continue
 
 Return to [INDEX.md](../../INDEX.md) and finish all routes relevant to the latest task before acting. After verification, update affected owning facts, REPORT and HANDOFFS.
+
+
+## 2026-10-24: session allocation and dependency checks
+
+On branch `codex/browser-session-cap-20261024` over `c0d9a0158760f4265f500b11b7d5357bb5779eca`,
+regressions demonstrated that overlapping creations exceeded the configured cap, attachments
+bypassed it, failed attachment metadata left a registered session, and concurrent first
+launches created an untracked browser process. Reservations now cover create/attach,
+registration happens after metadata succeeds, and concurrent engine launches share one promise.
+
+The first independent GLM-5.3 review found a newly unregistered owned context on a title
+failure. Two failing regressions reproduced that case; failure cleanup now closes only
+contexts created by the failed operation, preserving pre-existing adopted contexts.
+The final independent GLM-5.3 review (high reasoning, read-only Pi, 259 seconds)
+found no actionable new regressions. Both required skill reads and an unchanged
+candidate diff hash were observed. The review was static; execution evidence is below.
+
+Verification: the original 10 tests passed; four initial regressions failed before the
+capacity fix; one additional launch regression failed before launch sharing; two review
+regressions failed before owned-context cleanup. All 23 final tests pass. The controlled
+real-Chrome test passes and exits cleanly after checking browser identity, capacity, slot
+reuse, adopted-context survival and fixture cleanup. Safari/WebKit live suites were not run.
+
+The dependency audit initially reported nine affected packages, including high/critical
+findings. Existing dependency ranges were refreshed; MCP SDK now requires >=1.32.0 within
+major 1 and Zod >=4.6.7 within major 4. The final audit reports zero findings. Tool-schema
+defaults and invalid-input rejection are covered explicitly after the Zod upgrade.
+No new direct dependency, hosted service, private browser access or deployment was added.
+
+Local CI-equivalent acceptance: all 23 unit/MCP tests, 25 documentation-checker
+fixtures, workflow/review validators, and full-history and candidate secret scans passed.
+Hosted Actions were removed in the base commit; no hosted CI or production rollout is claimed.

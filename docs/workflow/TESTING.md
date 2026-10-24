@@ -36,3 +36,12 @@ Install the pinned CommonMark parser with `python -m pip install -r tools/requir
 ## Continue
 
 Return to [INDEX.md](../../INDEX.md) and finish all routes relevant to the latest task before acting. After verification, update affected owning facts, REPORT and HANDOFFS.
+
+
+## Session allocation regression
+
+`npm run test:ci` includes cap reservations across overlapping create/attach calls,
+launch sharing/retry, attachment failure cleanup and MCP schema defaults/rejections.
+`node test/session-cap-live.js` additionally uses task-owned headless Google Chrome
+and a temporary profile to check cold-launch sharing, the cap, slot reuse and adopted
+context survival. It does not connect to a pre-existing user browser or port 9222.

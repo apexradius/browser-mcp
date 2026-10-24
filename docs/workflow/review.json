@@ -1,25 +1,35 @@
 {
   "version": 1,
   "complete": false,
-  "scope": "Browser MCP: portable document navigation and source-bound review continuity; includes one runtime change: the HTTP daemon binds explicitly to loopback 127.0.0.1, with the ready message updated accordingly.",
-  "reviewed_at": "2026-09-28T15:22:01.515177+00:00",
-  "source_revision": "c54c7b603634b4c8c581e99f21e41d130651cb2f",
+  "scope": "Browser MCP session allocation, owned-resource cleanup and audited dependency updates; local candidate over c0d9a01.",
+  "reviewed_at": "2026-10-24T07:00:05.425913+00:00",
+  "source_revision": "c0d9a0158760f4265f500b11b7d5357bb5779eca",
   "files": {
     "README.md": "2e7e57cbd7097352a25843bfd7d486555e696d27ca07ac4fba9134f583cb9340",
     "prompt.md": "de360a4cef6e70ba73a1676585171669a3f0b06825eb002cff8b35de9edd704c",
     "INDEX.md": "b10bc740df6f9e6f70ff9d520aa6c5d0c57097831d267f271465ff81d2464cd4",
-    "docs/workflow/HANDOFFS.md": "45d8fef40dda4026c0a042066dded97965437e8e870c2708818f8dfea4b31ac8"
+    "docs/workflow/HANDOFFS.md": "5f286d3d76c9fb68ebd8f26d2cf8d895c04bfe2b63a5d0eb3ff197046a464a56",
+    "src/pool.js": "5939932fa6de971d9a3d0ab3464fba01f48265de43831031890fde44fb10fab5",
+    "test/pool.test.js": "0c715214dfae0543ed7a681818e54a100e2ab85ff3f69ebc9eb112219d290ed1",
+    "test/server.test.js": "80860978575c7ca92709efbe73c55f66ca82dcd537525d5be1e23c048403ccbe",
+    "test/session-cap-live.js": "06804c76632715e4ab72275c1ebc2170c32a42039c8832ee72bf0c84419fb687",
+    "package.json": "0918b157035b772e54cb6e5c07b767d8d8674024403b1d417076abf90e1b4531",
+    "package-lock.json": "f81b6f8f966421ce39420cd9db5dee982d62b5b7f7b9c4cea7d2803cf69b486d",
+    "docs/workflow/REPORT.md": "41e7ac76d46df06c6f6e7b8a86031f37e02ef0520e2a21a26815cdcf6a10ff80",
+    "docs/workflow/ARCHITECTURE.md": "06b792d92bb518136ea83bb3f44df72b80d85ba948f641c1c7c9be58a3ce1873",
+    "docs/workflow/DATABASE.md": "01f9764261641bf5ba508b1344046c01e64262c30a09c41a8a0eb64bd6abef4a",
+    "docs/workflow/TESTING.md": "8ab507724f0a12619c28a1a3b0b32ff63aa8dd521b7fade3bfa69bc2a81d6d00"
   },
   "stages": {
     "local": {
       "required": true,
-      "status": "pending",
-      "evidence": "Run tracked navigation, review consistency, checker fixtures and repository-required checks before delivery."
+      "status": "passed",
+      "evidence": "23 hermetic tests, controlled headless Chrome regression and npm audit passed; report records limits."
     },
     "ci": {
       "required": true,
-      "status": "pending",
-      "evidence": "Current candidate hosted checks not yet observed."
+      "status": "passed",
+      "evidence": "23 unit/MCP tests, 25 workflow checker fixtures, document validators and secret scans passed locally; hosted Actions removed by owner in base c0d9a01. Final independent GLM-5.3 static review found no actionable new regressions."
     },
     "merge": {
       "required": true,
@@ -29,7 +39,7 @@
     "deployment": {
       "required": false,
       "status": "not_applicable",
-      "evidence": "Documentation delivery plus one daemon loopback-bind runtime change; no product release authorized by this record."
+      "evidence": "Source and dependency fixes only; no daemon installation, package publication or production deployment in this scope."
     },
     "knowledge": {
       "required": true,
