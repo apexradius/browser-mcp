@@ -1,4 +1,5 @@
 const SAFARI_CONNECTION_TIMEOUT = 'The session timed out while connecting to a Safari instance';
+const SAFARI_AUTOMATION_DISABLED = "You must enable 'Allow remote automation'";
 
 export async function safariLifecycle(manager, base, ok, skip) {
   let connected = false;
@@ -16,7 +17,7 @@ export async function safariLifecycle(manager, base, ok, skip) {
     await manager.close(sf);
   } catch (error) {
     const reason = error?.message ?? String(error);
-    if (!connected && reason.includes(SAFARI_CONNECTION_TIMEOUT)) {
+    if (!connected && (reason.includes(SAFARI_CONNECTION_TIMEOUT) || reason.includes(SAFARI_AUTOMATION_DISABLED))) {
       skip(`SKIP  safari: environment unavailable (real Safari.app session could not connect)  — ${reason}`);
     } else {
       ok('safari: lifecycle', false, reason);
