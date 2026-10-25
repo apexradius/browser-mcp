@@ -37,6 +37,41 @@ test('a failed creation releases capacity for a later request', async () => {
   assert.equal(await pool.create(), 's1');
 });
 
+for (const cleanupFails of [false, true]) {
+  test(`failed page creation closes its context and preserves the error (cleanupFails=${cleanupFails})`, async () => {
+    const pool = new SessionPool({ maxSessions: 1 });
+    const failure = new Error('page creation failed');
+    let closed = 0;
+    pool.browsers.set('chromium', { newContext: async () => ({
+      newPage: async () => { throw failure; },
+      close: async () => { closed++; if (cleanupFails) throw new Error('cleanup failed'); },
+    }) });
+    await assert.rejects(() => pool.create(), (error) => error === failure);
+    assert.equal(closed, 1);
+    assert.deepEqual(pool.list(), []);
+    pool.browsers.set('chromium', { newContext: async () => ({ newPage: async () => ({}) }) });
+    assert.equal(await pool.create(), 's1');
+  });
+}
+
+test('shutdown closes isolated attached contexts while preserving adopted browser state', async () => {
+  const pool = new SessionPool();
+  let isolatedClosed = 0, adoptedClosed = 0, browserClosed = 0;
+  const page = { url: () => 'about:blank', title: async () => 'Fixture' };
+  const adopted = { pages: () => [page], close: async () => { adoptedClosed++; } };
+  const isolated = { addInitScript: async () => {}, newPage: async () => page,
+    close: async () => { isolatedClosed++; } };
+  pool.attached.set('fixture', { contexts: () => [adopted], newContext: async () => isolated,
+    close: async () => { browserClosed++; } });
+  await pool.attach({ cdpEndpoint: 'fixture' });
+  await pool.attach({ cdpEndpoint: 'fixture', mode: 'isolated' });
+  await pool.shutdown();
+  assert.equal(isolatedClosed, 1);
+  assert.equal(adoptedClosed, 0);
+  assert.equal(browserClosed, 0);
+  assert.deepEqual(pool.list(), []);
+});
+
 test('a failed attachment releases capacity and never registers a session', async () => {
   const pool = new SessionPool({ maxSessions: 1 });
   const page = { url: () => 'about:blank', title: async () => { throw new Error('page closed'); } };

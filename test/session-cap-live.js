@@ -48,8 +48,11 @@ try {
   await manager.close(created);
   const isolated = await attach('isolated');
   assert.notEqual(isolated.isError, true);
-  await manager.close(JSON.parse(isolated.content[0].text).session);
+  const isolatedContext = manager.pool.get(JSON.parse(isolated.content[0].text).session).context;
+  let isolatedClosed = false;
+  isolatedContext.on('close', () => { isolatedClosed = true; });
   await manager.shutdown();
+  assert.equal(isolatedClosed, true, 'shutdown must close the isolated context it created');
   assert.equal(page.isClosed(), false);
   assert.equal(await page.title(), 'Owned capacity fixture');
   assert.deepEqual(manager.list(), []);

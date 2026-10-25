@@ -5,15 +5,15 @@
 | Question | Answer |
 | --- | --- |
 | **Whom?** | agent operator controlling a specifically authorized browser session while preserving the user’s existing browser state. |
-| **What?** | npm run test:ci uses node --test test/*.test.js: in-memory MCP transport tests check ten schemas, success/error envelopes; pool tests check empty state, unknown session, cap and unsupported engine before launch; Safari lifecycle tests classify only a pre-connection Safari timeout as an environment skip while other creation and post-connection failures remain failures. |
+| **What?** | npm run test:ci uses node --test test/*.test.js: in-memory MCP transport tests check ten schemas, success/error envelopes; pool tests check empty state, unknown session, cap, unsupported engine before launch, context cleanup on failed creation and shutdown closure of isolated attached contexts; Safari lifecycle tests classify pre-connection Safari connection timeouts and the disabled remote-automation permission gate as environment skips while other creation and post-connection failures remain failures. |
 | **Where?** | test/server.test.js, test/pool.test.js, test/safari-lifecycle.test.js. |
 | **Why it exists?** | Local multi-session browser MCP needs this document to choose a check that proves the changed behavior without claiming broader evidence. |
-| **Why this approach?** | npm run test:ci uses node --test test/*.test.js: in-memory MCP transport tests check ten schemas, success/error envelopes; pool tests check empty state, unknown session, cap and unsupported engine before launch; Safari lifecycle tests classify only a pre-connection Safari timeout as an environment skip while other creation and post-connection failures remain failures. |
+| **Why this approach?** | npm run test:ci uses node --test test/*.test.js: in-memory MCP transport tests check ten schemas, success/error envelopes; pool tests check empty state, unknown session, cap, unsupported engine before launch, context cleanup on failed creation and shutdown closure of isolated attached contexts; Safari lifecycle tests classify pre-connection Safari connection timeouts and the disabled remote-automation permission gate as environment skips while other creation and post-connection failures remain failures. |
 | **Why it matters?** | A registration or document check cannot prove live authentication, provider state or the installed user path. |
 
 ## Required proof by behavior
 
-npm run test:ci uses node --test test/*.test.js: in-memory MCP transport tests check ten schemas, success/error envelopes; pool tests check empty state, unknown session, cap and unsupported engine before launch; Safari lifecycle tests classify only a pre-connection Safari timeout as an environment skip while other creation and post-connection failures remain failures. npm test runs test/extensive.js and real browsers; attach/Safari/HTTP scripts exercise live local state and have different side effects. No browser was launched here. Changes to adopted-context ownership need a controlled browser regression, not only the hermetic schema test.
+npm run test:ci uses node --test test/*.test.js: in-memory MCP transport tests check ten schemas, success/error envelopes; pool tests check empty state, unknown session, cap, unsupported engine before launch, context cleanup on failed creation and shutdown closure of isolated attached contexts; Safari lifecycle tests classify pre-connection Safari connection timeouts and the disabled remote-automation permission gate as environment skips while other creation and post-connection failures remain failures. npm test runs test/extensive.js and real browsers; attach/Safari/HTTP scripts exercise live local state and have different side effects. No browser was launched here. Changes to adopted-context ownership need a controlled browser regression, not only the hermetic schema test.
 
 ## Product acceptance baseline
 
@@ -41,7 +41,9 @@ Return to [INDEX.md](../../INDEX.md) and finish all routes relevant to the lates
 ## Session allocation regression
 
 `npm run test:ci` includes cap reservations across overlapping create/attach calls,
-launch sharing/retry, attachment failure cleanup and MCP schema defaults/rejections.
+launch sharing/retry, attachment and page-creation failure cleanup, shutdown closure of
+isolated attached contexts, and MCP schema defaults/rejections.
 `node test/session-cap-live.js` additionally uses task-owned headless Google Chrome
-and a temporary profile to check cold-launch sharing, the cap, slot reuse and adopted
-context survival. It does not connect to a pre-existing user browser or port 9222.
+and a temporary profile to check cold-launch sharing, the cap, slot reuse, adopted
+context survival and shutdown closure of its isolated context. It does not connect to a
+pre-existing user browser or port 9222.
