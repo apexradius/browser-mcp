@@ -76,13 +76,17 @@ export class SessionPool {
 
   async create({ engine = 'chromium' } = {}) {
     this._reserveSession();
+    let context;
     try {
       const browser = await this._browser(engine);
-      const context = await browser.newContext();
+      context = await browser.newContext();
       const page = await context.newPage();
       const id = `s${++this.counter}`;
       this.sessions.set(id, { engine, context, page });
       return id;
+    } catch (error) {
+      if (context) { try { await context.close(); } catch {} }
+      throw error;
     } finally {
       this.pendingSessions--;
     }
@@ -163,7 +167,7 @@ export class SessionPool {
     // Only close contexts/browsers WE own. Attached (user) Chrome is left running —
     // we just drop the CDP references; the socket closes when the process exits.
     for (const s of this.sessions.values()) {
-      if (!s.attachedEndpoint) { try { await s.context.close(); } catch {} }
+      if (!s.adopted) { try { await s.context.close(); } catch {} }
     }
     for (const b of this.browsers.values()) { try { await b.close(); } catch {} }
     this.sessions.clear(); this.browsers.clear(); this.attached.clear();
