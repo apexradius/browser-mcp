@@ -52,3 +52,10 @@ remain in AGENTS; implementation, verification and release detail stays in its o
 documents. This documentation-only change preserves runtime code and existing product
 acceptance limits. The owner authorized reviewed PR delivery after applicable checks
 and independent review; it does not authorize production deployment.
+
+
+## 2026-10-27: HTTP session routing candidate
+
+Branch `refactor/browser-mcp-cleanup-20261027` starts from upstream `8aa9a2a858d93d2433a68966365fba445c8dd7ab` in an isolated task checkout. HTTP session IDs now use Map lookup: new initialization omits the ID; missing IDs on other requests return 400, supplied unknown/empty/terminated IDs return 404. The focused actual-daemon regression passes after observed failures on the old source; the daemon fixture is shared with the extensive suite. NoMistakes declares both unit/HTTP and extensive suites.
+
+Final combined checks, independent review and native delivery are pending in this dated record. Main has no registered forge checks and lacks a trusted no-CI declaration, so an empty check list cannot establish merge readiness. Real Safari timed out in the baseline and optional CDP attach was skipped. Preserve all original dirty checkouts and recovery data. No installed runtime or user browser cutover is authorized by this source change.

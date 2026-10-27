@@ -2,10 +2,9 @@
 // daemon, then exercises tools, engines, concurrency, isolation, and errors.
 // CDP-attach runs only when ABM_CDP=1. No test-only dependencies.
 import http from 'node:http';
-import { spawn } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
-import { fileURLToPath } from 'node:url';
 import { BrowserManager } from '../src/manager.js';
+import { startHttpDaemon } from './helpers/http-daemon.js';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import { safariLifecycle } from './safari-lifecycle.js';
@@ -13,57 +12,6 @@ import { safariLifecycle } from './safari-lifecycle.js';
 let pass = 0, fail = 0;
 const ok = (name, cond, extra = '') => { cond ? pass++ : fail++; console.log(`${cond ? 'PASS' : 'FAIL'}  ${name}${extra ? '  — ' + extra : ''}`); };
 const section = (t) => console.log(`\n=== ${t} ===`);
-
-async function startHttpDaemon() {
-  const entry = fileURLToPath(new URL('../src/index.js', import.meta.url));
-  return new Promise((resolve, reject) => {
-    let stderr = '';
-    let settled = false;
-    const child = spawn(process.execPath, [entry], {
-      env: {
-        ...process.env,
-        APEX_BROWSER_TRANSPORT: 'http',
-        APEX_BROWSER_PORT: '0',
-        APEX_BROWSER_AUTOATTACH: '0',
-        APEX_BROWSER_HEADLESS: '1',
-        APEX_BROWSER_MAX_SESSIONS: '30',
-      },
-      stdio: ['ignore', 'ignore', 'pipe'],
-    });
-    const fail = (error) => {
-      if (settled) return;
-      settled = true;
-      clearTimeout(timer);
-      child.kill('SIGTERM');
-      reject(error);
-    };
-    const timer = setTimeout(() => fail(new Error(`HTTP daemon startup timed out: ${stderr.trim()}`)), 10000);
-    child.once('error', fail);
-    child.once('exit', (code, signal) => {
-      if (!settled) fail(new Error(`HTTP daemon exited before ready (${code ?? signal}): ${stderr.trim()}`));
-    });
-    child.stderr.setEncoding('utf8');
-    child.stderr.on('data', (chunk) => {
-      stderr = (stderr + chunk).slice(-4096);
-      const match = stderr.match(/http daemon on 127\.0\.0\.1:(\d+)/);
-      if (settled || !match) return;
-      settled = true;
-      clearTimeout(timer);
-      resolve({
-        child,
-        url: `http://127.0.0.1:${match[1]}/mcp`,
-        async stop() {
-          if (child.exitCode !== null || child.signalCode !== null) return;
-          const exited = new Promise((done) => child.once('exit', done));
-          child.kill('SIGTERM');
-          const forceStop = setTimeout(() => child.kill('SIGKILL'), 5000);
-          await exited;
-          clearTimeout(forceStop);
-        },
-      });
-    });
-  });
-}
 
 // ---- fixture server ----
 const PAGE = (title, body) => `<!doctype html><html><head><title>${title}</title></head><body>${body}</body></html>`;

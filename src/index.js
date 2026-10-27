@@ -62,28 +62,42 @@ async function httpMain() {
 
   const app = express();
   app.use(express.json());
-  const transports = {}; // mcp-session-id -> transport (one MCP client each)
+  const transports = new Map(); // mcp-session-id -> transport (one MCP client each)
+
+  // Single owner of session-identity resolution: a missing id is 400 unless the
+  // request initializes a new session; any supplied id that is not a live
+  // session (including inherited object keys like __proto__/constructor) is 404.
+  const resolveSession = (req) => {
+    const sid = req.headers['mcp-session-id'];
+    if (sid === undefined) return { missing: true };
+    return { transport: transports.get(sid) };
+  };
+  const noSession = (res) => res.status(404).json({ jsonrpc: '2.0', error: { code: -32000, message: 'No valid session' }, id: null });
 
   app.post('/mcp', async (req, res) => {
-    const sid = req.headers['mcp-session-id'];
-    let transport = sid && transports[sid];
-    if (!transport && isInitializeRequest(req.body)) {
-      transport = new StreamableHTTPServerTransport({
-        sessionIdGenerator: () => randomUUID(),
-        onsessioninitialized: (id) => { transports[id] = transport; },
-      });
-      transport.onclose = () => { if (transport.sessionId) delete transports[transport.sessionId]; };
-      await buildServer(pool, { screenshotDir: SHOTS }).connect(transport);
-    } else if (!transport) {
+    const { transport, missing } = resolveSession(req);
+    if (transport) { // known session: the SDK owns duplicate-initialize handling
+      await transport.handleRequest(req, res, req.body);
+      return;
+    }
+    if (!missing) return noSession(res); // supplied unknown/terminated id
+    if (!isInitializeRequest(req.body)) {
       return res.status(400).json({ jsonrpc: '2.0', error: { code: -32000, message: 'No valid session' }, id: null });
     }
-    await transport.handleRequest(req, res, req.body);
+    const newTransport = new StreamableHTTPServerTransport({
+      sessionIdGenerator: () => randomUUID(),
+      onsessioninitialized: (id) => { transports.set(id, newTransport); },
+    });
+    newTransport.onclose = () => { if (newTransport.sessionId) transports.delete(newTransport.sessionId); };
+    await buildServer(pool, { screenshotDir: SHOTS }).connect(newTransport);
+    await newTransport.handleRequest(req, res, req.body);
   });
 
   const sessionReq = async (req, res) => {
-    const sid = req.headers['mcp-session-id'];
-    if (!sid || !transports[sid]) return res.status(400).send('No valid session');
-    await transports[sid].handleRequest(req, res);
+    const { transport, missing } = resolveSession(req);
+    if (missing) return res.status(400).send('No valid session');
+    if (!transport) return res.status(404).send('No valid session');
+    await transport.handleRequest(req, res);
   };
   app.get('/mcp', sessionReq);    // SSE stream
   app.delete('/mcp', sessionReq); // session teardown

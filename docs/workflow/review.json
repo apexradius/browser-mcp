@@ -1,42 +1,47 @@
 {
   "version": 1,
   "complete": false,
-  "scope": "Concise task-directed project guidance; documentation-only delivery with product acceptance limits preserved.",
-  "reviewed_at": "2026-10-24T07:47:50.066931+00:00",
-  "source_revision": "71299b30a5c166c71dc4f1ddd76dc1a16c17b60b",
+  "scope": "HTTP session identity maintenance, combined test command and inspected current source bindings; uncommitted candidate over recorded upstream base.",
+  "reviewed_at": "2026-10-27T23:52:59.245807+00:00",
+  "source_revision": "8aa9a2a858d93d2433a68966365fba445c8dd7ab",
   "files": {
     "README.md": "b2743d9a54cab8544b82789827a912759a827a9b2cfa184a154f668d8950700c",
     "prompt.md": "b5214a5092c7174fd70b04fb0c0a1c66f26911e330a84795f82d2ff810763eb8",
     "INDEX.md": "264bcd6c298be3ffb7a9281694ba52668d2e2325540d0409280217e0791e37b7",
-    "docs/workflow/HANDOFFS.md": "3bcb85b5f97eee46d413a89292a708e1e1cd6155daff9d763c99ea0af34a4c07",
-    "src/pool.js": "5939932fa6de971d9a3d0ab3464fba01f48265de43831031890fde44fb10fab5",
-    "test/pool.test.js": "0c715214dfae0543ed7a681818e54a100e2ab85ff3f69ebc9eb112219d290ed1",
+    "docs/workflow/HANDOFFS.md": "b44748e4bbf3cc8e2a113c6c66e8c912ff5d89d83cb8ad1a09abdbe415e11afd",
+    "src/pool.js": "34d2a92c9044b6a26f6399de5e003e48d3bcb3db76d11374a7302de8a28f4a91",
+    "test/pool.test.js": "1f08e15da8a84eafc995b54dadb789f49e4243e752a68037768d3d0c0d5d8ab7",
     "test/server.test.js": "80860978575c7ca92709efbe73c55f66ca82dcd537525d5be1e23c048403ccbe",
-    "test/session-cap-live.js": "06804c76632715e4ab72275c1ebc2170c32a42039c8832ee72bf0c84419fb687",
+    "test/session-cap-live.js": "d6f26e83e4adfbc4aaff47ca6dc1da2070803f1232527863db8ff01c5fab5ad0",
     "package.json": "0918b157035b772e54cb6e5c07b767d8d8674024403b1d417076abf90e1b4531",
     "package-lock.json": "f81b6f8f966421ce39420cd9db5dee982d62b5b7f7b9c4cea7d2803cf69b486d",
-    "docs/workflow/REPORT.md": "02137e7e700f3e40560ac63d4e73f25900902d1c46a94a125ad05230753b2b2d",
+    "docs/workflow/REPORT.md": "d4c1b4bc586b218c4462a6f4b78e282ca3124e5a2d887a871d68afeb4aa9c297",
     "docs/workflow/ARCHITECTURE.md": "06b792d92bb518136ea83bb3f44df72b80d85ba948f641c1c7c9be58a3ce1873",
     "docs/workflow/DATABASE.md": "01f9764261641bf5ba508b1344046c01e64262c30a09c41a8a0eb64bd6abef4a",
-    "docs/workflow/TESTING.md": "dfbc14271bc9251c2afc9b43a60cdd73bac0896e36abd6a09bd7b3ae3435a1e3",
+    "docs/workflow/TESTING.md": "257f366f844ee67e3b57cfa0cedd7fed0876397c86179077f84f1f9a150e5b9a",
     "docs/workflow/AGENTS.md": "06c10e312e0a916bd26cb06c8b89b70ce2c08223ed2366e256bb3d2735751aba",
-    "docs/workflow/CAPABILITIES.md": "985f81b26f7b9ab5a85914fbfa2afa42275b8eef81c299a4b4e4bb029744f6eb"
+    "docs/workflow/CAPABILITIES.md": "99b6df6d7cb704e8650a7080d3c201713c76a17179f6befdb3dec1d4135bf07d",
+    "src/index.js": "088db42ac507fa185b2512df942b1ec8f093407680820ce84ed7d0532fe0f4ad",
+    "test/http-session.test.js": "e1e1a947a9079ee602727fedde30759b55e8041b74fe7ee96f3cca2273318fdb",
+    "test/helpers/http-daemon.js": "0bf193777c9bf869f755698472feafec21d19bb7d1622d6187c809cf5581590e",
+    "test/extensive.js": "4f819686022ad518bb2dad24eb63d0438aa4639a3e71616f3e1acacb0a65d2d7",
+    ".no-mistakes.yaml": "73e2611ecad2521368a8864c7a25f72b3871b34e9781b7036f28114e41aa8990"
   },
   "stages": {
     "local": {
       "required": true,
-      "status": "passed",
-      "evidence": "25 existing document-checker fixtures, tracked navigation and review-snapshot consistency passed. Runtime source unchanged."
+      "status": "pending",
+      "evidence": "Final combined candidate checks and independent reviews pending; earlier dated results retained in REPORT."
     },
     "ci": {
       "required": true,
-      "status": "passed",
-      "evidence": "Applicable local documentation gates passed; no hosted workflow files at this base."
+      "status": "pending",
+      "evidence": "Native NoMistakes delivery pending; empty forge checks require trusted policy, not inference."
     },
     "merge": {
       "required": true,
       "status": "pending",
-      "evidence": "Documentation candidate awaiting its current validation, independent review and PR delivery."
+      "evidence": "Owner authorizes merge only after applicable exact-head green checks."
     },
     "deployment": {
       "required": false,
@@ -46,7 +51,7 @@
     "knowledge": {
       "required": true,
       "status": "passed",
-      "evidence": "Canonical task routing and handoff updated; external knowledge publication outside scope."
+      "evidence": "Owning HTTP facts, validation guidance, dated report and handoff updated; no external publication."
     }
   }
 }
