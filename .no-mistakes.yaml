@@ -1,3 +1,4 @@
 agent: pi
+no_ci: true
 commands:
-  test: "node test/extensive.js"
+  test: "npm ci --ignore-scripts && npm run test:ci && npm test"

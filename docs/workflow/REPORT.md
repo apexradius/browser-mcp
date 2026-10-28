@@ -88,3 +88,12 @@ navigation and applicable review-snapshot checks. Runtime source is unchanged.
 Independent read-only GLM-5.3/high review checked retained project constraints and
 the owning document routes. Findings relevant to this candidate were resolved and
 the final navigation/review checks passed; runtime source remains unchanged.
+
+
+## 2026-10-27: HTTP session routing maintenance
+
+Over upstream base `8aa9a2a858d93d2433a68966365fba445c8dd7ab`, the HTTP transport registry now uses a Map. Missing IDs still return 400 outside initialization; supplied unknown, empty or terminated IDs return 404 and cannot initialize another transport. Known-session requests remain with the SDK. The owned daemon fixture is shared by the HTTP regression and extensive suite; NoMistakes now declares both test suites.
+
+The initial HTTP test had an SSE decoding error. After correcting that fixture, a retrospective run against the pristine base reproduced ordinary unknown IDs returning 400, prototype keys returning 500, stale initialization issuing a new ID, and stale requests after DELETE returning 400. Valid initialization and tool listing passed on that baseline. The corrected implementation passed the same focused suite. An additional empty-header regression failed with 200 before its guard correction and passed afterwards.
+
+Baseline verification observed 27 hermetic tests, 22 extensive checks and 25 documentation fixtures passing, zero dependency advisories and clean source secret scans. Real Safari was unavailable (connection timeout); optional CDP attach was skipped. Those results do not prove Safari, installed-daemon behavior or production readiness. Final combined verification and native NoMistakes delivery are pending in this dated candidate record. Original checkout edits and recovery worktrees are preserved; no installed daemon, client configuration or user browser was changed.

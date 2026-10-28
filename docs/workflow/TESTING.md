@@ -31,7 +31,7 @@ Inspected means source/test definitions were read. Locally verified means the na
 
 ## Document checker dependency
 
-Install the pinned CommonMark parser with `python -m pip install -r tools/requirements-workflow.txt` before running the document checkers and their fixtures. `markdown-it-py` parses actual navigation tokens; it does not render pages, fetch links or establish reader comprehension. CI uses Python 3.12 and the same pinned dependency.
+Install the pinned CommonMark parser with `python -m pip install -r tools/requirements-workflow.txt` before running the document checkers and their fixtures. `markdown-it-py` parses actual navigation tokens; it does not render pages, fetch links or establish reader comprehension.
 
 ## Continue
 
@@ -47,3 +47,8 @@ isolated attached contexts, and MCP schema defaults/rejections.
 and a temporary profile to check cold-launch sharing, the cap, slot reuse, adopted
 context survival and shutdown closure of its isolated context. It does not connect to a
 pre-existing user browser or port 9222.
+
+
+## HTTP session identity regression
+
+`npm run test:ci` also runs `test/http-session.test.js` against a task-owned daemon on an OS-assigned loopback port. It checks missing, unknown, prototype-shaped, empty and terminated session IDs, initialization, all ten tool schemas and fresh handshakes. It launches no browser and does not contact installed ports 3010 or 9222. The shared `test/helpers/http-daemon.js` fixture is also used by the extensive multi-client suite. The NoMistakes test command installs locked dependencies with `npm ci --ignore-scripts`, then runs both `npm run test:ci` and `npm test`.
