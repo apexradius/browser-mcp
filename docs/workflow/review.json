@@ -20,7 +20,7 @@
     "docs/workflow/DATABASE.md": "01f9764261641bf5ba508b1344046c01e64262c30a09c41a8a0eb64bd6abef4a",
     "docs/workflow/TESTING.md": "257f366f844ee67e3b57cfa0cedd7fed0876397c86179077f84f1f9a150e5b9a",
     "docs/workflow/AGENTS.md": "06c10e312e0a916bd26cb06c8b89b70ce2c08223ed2366e256bb3d2735751aba",
-    "docs/workflow/CAPABILITIES.md": "99b6df6d7cb704e8650a7080d3c201713c76a17179f6befdb3dec1d4135bf07d",
+    "docs/workflow/CAPABILITIES.md": "86631a61a960214a840fcca4492eb2288292b424ced048ac29312e91aedbe3bb",
     "src/index.js": "088db42ac507fa185b2512df942b1ec8f093407680820ce84ed7d0532fe0f4ad",
     "test/http-session.test.js": "051db1e34e092cdbc73315f7510574f46f0c4bfb48b43d135ee8f1efd176e20a",
     "test/helpers/http-daemon.js": "0bf193777c9bf869f755698472feafec21d19bb7d1622d6187c809cf5581590e",

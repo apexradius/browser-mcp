@@ -13,7 +13,7 @@
 
 ## Implemented surface
 
-browser_new_session(engine=chromium), engines chrome/chromium/webkit/safari; browser_attach(cdpEndpoint=http://127.0.0.1:9222,mode=default|isolated); browser_navigate(session,url); browser_snapshot(session); browser_click(session,ref); browser_type(session,ref,text,submit=false); browser_evaluate(session,expression); browser_screenshot(session); browser_list_sessions(); browser_close_session(session). Snapshot returns title, URL and e1/e2-style interactive refs; page elements receive data-abm-ref. Screenshot writes PNG under APEX_BROWSER_SHOTS or /tmp and returns its path. Handler failure returns isError=true with ERROR: text. HTTP POST /mcp initializes a transport only when mcp-session-id is omitted. Missing IDs on other requests return 400; unknown or terminated IDs return 404 across POST/GET/DELETE, including initialization with a stale or empty ID. POST errors retain JSON-RPC code -32000. GET /health returns ok:true and session count, not an active browser exercise.
+Ten browser tools implement the capability surface: session lifecycle (new/attach/list/close) across the chrome/chromium/webkit/safari engines, navigation and snapshot with e1/e2-style interactive refs, click/type/evaluate interaction, and PNG screenshots under APEX_BROWSER_SHOTS or /tmp. Handler failure returns isError=true with ERROR: text; GET /health reports ok:true with a session count and is not an active browser exercise. The exact current interface, including tool parameters and HTTP mcp-session-id handling, is authoritative in [API.md](API.md#exact-current-interface).
 
 ## Capability does not imply authorization
 
