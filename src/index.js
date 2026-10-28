@@ -72,7 +72,6 @@ async function httpMain() {
     if (sid === undefined) return { missing: true };
     return { transport: transports.get(sid) };
   };
-  const noSession = (res) => res.status(404).json({ jsonrpc: '2.0', error: { code: -32000, message: 'No valid session' }, id: null });
 
   app.post('/mcp', async (req, res) => {
     const { transport, missing } = resolveSession(req);
@@ -80,7 +79,7 @@ async function httpMain() {
       await transport.handleRequest(req, res, req.body);
       return;
     }
-    if (!missing) return noSession(res); // supplied unknown/terminated id
+    if (!missing) return res.status(404).json({ jsonrpc: '2.0', error: { code: -32000, message: 'No valid session' }, id: null }); // supplied unknown/terminated id
     if (!isInitializeRequest(req.body)) {
       return res.status(400).json({ jsonrpc: '2.0', error: { code: -32000, message: 'No valid session' }, id: null });
     }

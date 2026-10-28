@@ -21,7 +21,7 @@
     "docs/workflow/TESTING.md": "8f0078a369d75c900840c5c4ee93107fae97f37699006bfb80c320218ca5a467",
     "docs/workflow/AGENTS.md": "06c10e312e0a916bd26cb06c8b89b70ce2c08223ed2366e256bb3d2735751aba",
     "docs/workflow/CAPABILITIES.md": "86631a61a960214a840fcca4492eb2288292b424ced048ac29312e91aedbe3bb",
-    "src/index.js": "088db42ac507fa185b2512df942b1ec8f093407680820ce84ed7d0532fe0f4ad",
+    "src/index.js": "7842604871b8572e8e87ec934a93e47d8dc99dbcad5120d0df47243444ff41be",
     "test/http-session.test.js": "051db1e34e092cdbc73315f7510574f46f0c4bfb48b43d135ee8f1efd176e20a",
     "test/helpers/http-daemon.js": "0bf193777c9bf869f755698472feafec21d19bb7d1622d6187c809cf5581590e",
     "test/extensive.js": "4f819686022ad518bb2dad24eb63d0438aa4639a3e71616f3e1acacb0a65d2d7",
