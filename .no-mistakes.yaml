@@ -1,3 +1,4 @@
 agent: pi
+no_ci: true
 commands:
-  test: "npm run test:ci && npm test"
+  test: "npm ci --ignore-scripts && npm run test:ci && npm test"

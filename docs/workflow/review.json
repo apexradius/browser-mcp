@@ -1,9 +1,9 @@
 {
   "version": 1,
   "complete": false,
-  "scope": "HTTP session identity maintenance, combined test command and inspected current source bindings; uncommitted candidate over recorded upstream base.",
-  "reviewed_at": "2026-10-27T23:52:59.245807+00:00",
-  "source_revision": "8aa9a2a858d93d2433a68966365fba445c8dd7ab",
+  "scope": "Proposed explicit local-only NoMistakes CI and frozen dependency setup over published head54914b20; requires maintainer approval, not current CI readiness.",
+  "reviewed_at": "2026-10-28T02:27:51.201081+00:00",
+  "source_revision": "54914b20c04d13542ebb1d7e1743e5edcf929dd1",
   "files": {
     "README.md": "b2743d9a54cab8544b82789827a912759a827a9b2cfa184a154f668d8950700c",
     "prompt.md": "b5214a5092c7174fd70b04fb0c0a1c66f26911e330a84795f82d2ff810763eb8",
@@ -18,14 +18,14 @@
     "docs/workflow/REPORT.md": "d4c1b4bc586b218c4462a6f4b78e282ca3124e5a2d887a871d68afeb4aa9c297",
     "docs/workflow/ARCHITECTURE.md": "06b792d92bb518136ea83bb3f44df72b80d85ba948f641c1c7c9be58a3ce1873",
     "docs/workflow/DATABASE.md": "01f9764261641bf5ba508b1344046c01e64262c30a09c41a8a0eb64bd6abef4a",
-    "docs/workflow/TESTING.md": "257f366f844ee67e3b57cfa0cedd7fed0876397c86179077f84f1f9a150e5b9a",
+    "docs/workflow/TESTING.md": "8f0078a369d75c900840c5c4ee93107fae97f37699006bfb80c320218ca5a467",
     "docs/workflow/AGENTS.md": "06c10e312e0a916bd26cb06c8b89b70ce2c08223ed2366e256bb3d2735751aba",
     "docs/workflow/CAPABILITIES.md": "86631a61a960214a840fcca4492eb2288292b424ced048ac29312e91aedbe3bb",
     "src/index.js": "088db42ac507fa185b2512df942b1ec8f093407680820ce84ed7d0532fe0f4ad",
     "test/http-session.test.js": "051db1e34e092cdbc73315f7510574f46f0c4bfb48b43d135ee8f1efd176e20a",
     "test/helpers/http-daemon.js": "0bf193777c9bf869f755698472feafec21d19bb7d1622d6187c809cf5581590e",
     "test/extensive.js": "4f819686022ad518bb2dad24eb63d0438aa4639a3e71616f3e1acacb0a65d2d7",
-    ".no-mistakes.yaml": "73e2611ecad2521368a8864c7a25f72b3871b34e9781b7036f28114e41aa8990"
+    ".no-mistakes.yaml": "96bff10dff0747a846dc6e16fb44f7b95c9fc097df282d33d94596cab533a186"
   },
   "stages": {
     "local": {
