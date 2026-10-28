@@ -106,14 +106,14 @@ test('HTTP MCP session identity lookup', async (t) => {
     });
 
     let sid;
-    await t.test('valid initialize issues a session id and serves tools/list', async (t2) => {
+    await t.test('valid initialize issues a session id and serves tools/list', async () => {
       const init = await rpc(url, 'POST', { jsonrpc: '2.0', id: 1, method: 'initialize', params: INIT_PARAMS });
       assert.equal(init.status, 200, `initialize -> ${init.status}`);
       assert.ok(init.sid, 'session id header present');
       assert.ok(init.json?.result?.serverInfo, 'initialize result carries serverInfo');
       sid = init.sid;
       const ready = await rpc(url, 'POST', { jsonrpc: '2.0', method: 'notifications/initialized' }, { 'mcp-session-id': sid });
-      t2.assert.ok(ready.status === 200 || ready.status === 202, `initialized notification -> ${ready.status}`);
+      assert.ok(ready.status === 200 || ready.status === 202, `initialized notification -> ${ready.status}`);
       const tools = await rpc(url, 'POST', { jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} }, { 'mcp-session-id': sid });
       assert.equal(tools.status, 200, `tools/list -> ${tools.status}`);
       assert.equal(tools.json?.result?.tools?.length, 10, `ten tool schemas, got ${tools.json?.result?.tools?.length}`);

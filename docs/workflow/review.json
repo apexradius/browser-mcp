@@ -22,7 +22,7 @@
     "docs/workflow/AGENTS.md": "06c10e312e0a916bd26cb06c8b89b70ce2c08223ed2366e256bb3d2735751aba",
     "docs/workflow/CAPABILITIES.md": "99b6df6d7cb704e8650a7080d3c201713c76a17179f6befdb3dec1d4135bf07d",
     "src/index.js": "088db42ac507fa185b2512df942b1ec8f093407680820ce84ed7d0532fe0f4ad",
-    "test/http-session.test.js": "e1e1a947a9079ee602727fedde30759b55e8041b74fe7ee96f3cca2273318fdb",
+    "test/http-session.test.js": "051db1e34e092cdbc73315f7510574f46f0c4bfb48b43d135ee8f1efd176e20a",
     "test/helpers/http-daemon.js": "0bf193777c9bf869f755698472feafec21d19bb7d1622d6187c809cf5581590e",
     "test/extensive.js": "4f819686022ad518bb2dad24eb63d0438aa4639a3e71616f3e1acacb0a65d2d7",
     ".no-mistakes.yaml": "73e2611ecad2521368a8864c7a25f72b3871b34e9781b7036f28114e41aa8990"
